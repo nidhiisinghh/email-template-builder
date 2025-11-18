@@ -1,0 +1,162 @@
+/* hero.css - import alongside Hero.jsx (import './hero.css') */
+
+/* Global reset to avoid white-gap issues */
+:root{
+  --bg-1: #0f1724; /* deep navy */
+  --bg-2: #0b1220; /* darker */
+  --accent: #7c5cff; /* violet */
+  --muted: #9aa4b2;
+  --glass: rgba(255,255,255,0.06);
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;               /* important to remove default body margin */
+  background: var(--bg-1); /* ensures page background matches hero */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* small reset */
+*{box-sizing:border-box}
+
+.hero-root{
+  /* Fill the full viewport to avoid a white gap below */
+  min-height: 100vh; /* changed from 72vh to 100vh */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:48px 24px;
+  background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+  color: #eef2ff;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+.hero-inner{
+  width:100%;
+  max-width:1200px;
+  display:grid;
+  grid-template-columns: 1fr 420px;
+  gap:36px;
+  align-items:center;
+}
+
+.hero-copy{
+  padding:16px 0;
+}
+
+.hero-title{
+  font-size:clamp(28px, 4.6vw, 48px);
+  line-height:1.02;
+  margin:0 0 12px 0;
+  font-weight:700;
+  letter-spacing:-0.02em;
+}
+
+.hero-sub{
+  margin:0 0 22px 0;
+  color:var(--muted);
+  font-size:16px;
+  max-width:56ch;
+}
+
+.hero-ctas{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  padding:12px 18px;
+  border-radius:12px;
+  font-weight:600;
+  font-size:15px;
+  transition:transform .17s ease, box-shadow .17s ease;
+}
+
+.btn:focus{outline:2px solid rgba(124,92,255,0.28); outline-offset:4px}
+
+.btn-primary{
+  background:linear-gradient(90deg, var(--accent), #5ec8ff 120%);
+  color: #071022;
+  box-shadow: 0 6px 24px rgba(124,92,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.12);
+}
+
+.btn-primary:hover{transform:translateY(-3px)}
+
+.btn-ghost{
+  color:var(--muted);
+  background: transparent;
+  border:1px solid rgba(255,255,255,0.06);
+}
+
+.btn-ghost:hover{transform:translateY(-2px); background: rgba(255,255,255,0.02)}
+
+/* Preview card */
+.hero-preview{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.device{
+  width:100%;
+  max-width:380px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border-radius:18px;
+  padding:20px;
+  box-shadow: 0 10px 40px rgba(2,6,23,0.7), 0 2px 6px rgba(0,0,0,0.5);
+}
+
+.email-mock{
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+  border-radius:12px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.03);
+}
+
+.email-header{
+  padding:14px 16px;
+  font-weight:700;
+  font-size:13px;
+  background: linear-gradient(90deg, rgba(124,92,255,0.09), rgba(94,200,255,0.04));
+  color:#e9edff;
+}
+
+.email-body{
+  padding:18px 16px;
+}
+
+.email-body h3{
+  margin:0 0 6px 0;
+  font-size:16px;
+}
+
+.email-body p{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.email-cta{
+  padding:12px 16px;
+  text-align:right;
+  font-weight:600;
+  font-size:13px;
+  color: #bcdcff;
+}
+
+/* Responsive */
+@media (max-width:900px){
+  .hero-inner{grid-template-columns:1fr; gap:20px}
+  .hero-preview{order:-1}
+}
+
+@media (max-width:420px){
+  .device{max-width:320px}
+  .hero-title{font-size:28px}
+}
