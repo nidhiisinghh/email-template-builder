@@ -132,18 +132,19 @@ export default function ExportPane({ blocks }) {
             </div>
 
             <div className="code-preview">
-              <h3>Preview:</h3>
+              <h3>Preview ({exportFormat.toUpperCase()}):</h3>
               <pre>
                 {exportFormat === 'html'
-                  ? generateHTML().substring(0, 500)
-                  : generateJSON().substring(0, 500)}
-                ...
+                  ? generateHTML().substring(0, 500) + (generateHTML().length > 500 ? '...' : '')
+                  : generateJSON().substring(0, 500) + (generateJSON().length > 500 ? '...' : '')}
               </pre>
             </div>
 
-            <button className="export-btn" onClick={handleExport}>
-              📥 Export as {exportFormat.toUpperCase()}
-            </button>
+            <div className="export-actions">
+              <button className="export-btn" onClick={handleExport}>
+                📥 Export as {exportFormat.toUpperCase()}
+              </button>
+            </div>
           </>
         )}
       </div>

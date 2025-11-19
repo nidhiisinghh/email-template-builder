@@ -11,6 +11,10 @@ A modern, drag-drop email template builder built with React and Vite. Create pro
 - **JSON Export**: Export block structure as JSON for programmatic use
 - **SPA Builder**: Generate React components from your email template
 - **Full Property Editing**: Customize colors, fonts, padding, and more
+- **User Authentication**: Secure login and registration with JWT
+- **Template History**: Save and manage your email templates
+- **Prebuilt Templates**: Use professionally designed templates for common use cases
+- **Copy to Clipboard**: Easily copy your email HTML for pasting elsewhere
 
 ### 📋 Block Types
 1. **Text**: Add paragraphs with customizable fonts and colors
@@ -33,6 +37,7 @@ Each block supports:
 ### Prerequisites
 - Node.js 18.0 or higher
 - npm 9.0 or higher
+- MongoDB (local or remote)
 
 ### Installation
 
@@ -41,17 +46,42 @@ Each block supports:
 cd /Users/nidhisingh/Desktop/email-builder
 ```
 
-2. Install dependencies (already done):
+2. Install frontend dependencies:
 ```bash
 npm install
 ```
 
-3. Start the development server:
+3. Navigate to the backend directory and install backend dependencies:
+```bash
+cd backend
+npm install
+```
+
+4. Create a `.env` file in the backend directory with the following content:
+```
+PORT=5001
+MONGODB_URI=mongodb://localhost:27017/emailbuilder
+JWT_SECRET=email_builder_secret_key_12345
+FRONTEND_URL=http://localhost:5173
+```
+
+5. Start MongoDB (if using local MongoDB):
+```bash
+mongod
+```
+
+6. Start the backend server:
+```bash
+cd backend
+npm run dev
+```
+
+7. Start the frontend development server (in a new terminal):
 ```bash
 npm run dev
 ```
 
-4. Open your browser and navigate to:
+8. Open your browser and navigate to:
 ```
 http://localhost:5173/
 ```
@@ -60,18 +90,25 @@ http://localhost:5173/
 
 ### Building Your Email Template
 
-1. **Add Blocks**: Click on any block type in the left panel (Text, Image, Button, etc.)
-
-2. **Edit Content**: Click on a block to select it and edit its properties in the right panel
-
-3. **Customize Styling**:
+1. **Get Started**: Click "Get started" on the homepage
+2. **Login/Signup**: Authenticate with your credentials
+3. **Add Blocks**: Click on any block type in the left panel (Text, Image, Button, etc.)
+4. **Edit Content**: Click on a block to select it and edit its properties in the right panel
+5. **Customize Styling**:
    - Change background and text colors using color pickers
    - Adjust font size and padding with number inputs
    - Use the property panel for fine-tuned control
+6. **Reorder Blocks**: Use the up/down arrows on hover to rearrange blocks
+7. **Delete Blocks**: Use the X button on hover to remove blocks
+8. **Save Template**: Click "Save Template" to store your work
+9. **Template History**: Access all your saved templates from the history page
 
-4. **Reorder Blocks**: Use the up/down arrows on hover to rearrange blocks
+### Prebuilt Templates
 
-5. **Delete Blocks**: Use the X button on hover to remove blocks
+1. Click "Prebuilt Templates" in the editor
+2. Browse the available templates (Job Proposal, Event Invitation, Newsletter, Product Launch)
+3. Click "Use Template" to load a prebuilt template
+4. Customize the template to your needs
 
 ### Preview Pane
 
@@ -101,6 +138,11 @@ http://localhost:5173/
    - `App.jsx` - Main application component
    - `App.css` - Styling
 
+### Copy to Clipboard
+
+1. Click "Copy HTML" to copy the email HTML to your clipboard
+2. Paste the HTML anywhere you need it
+
 ## Project Structure
 
 ```
@@ -113,10 +155,22 @@ email-builder/
 │   │   ├── PreviewPane.jsx         # Preview view
 │   │   ├── ExportPane.jsx          # Export functionality
 │   │   └── SPABuilder.jsx          # React component generator
+│   ├── pages/
+│   │   ├── HeroPage.jsx           # Landing page
+│   │   ├── AuthPage.jsx           # Login/Signup page
+│   │   └── TemplateHistory.jsx    # Template history page
 │   ├── App.jsx                     # Main application
 │   ├── App.css                     # Main styles
 │   ├── index.css                   # Global styles
 │   └── main.jsx                    # React entry point
+├── backend/
+│   ├── controllers/               # Request handlers
+│   ├── models/                    # Database models
+│   ├── routes/                    # API routes
+│   ├── middleware/                # Authentication middleware
+│   ├── utils/                     # Utility functions
+│   ├── server.js                  # Express server
+│   └── .env                       # Environment variables
 ├── vite.config.js
 ├── package.json
 └── README.md
@@ -144,6 +198,24 @@ Export in HTML or JSON formats.
 
 ### SPABuilder
 Generate React component code from the template.
+
+## Backend API
+
+### Authentication
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Login user
+- `GET /api/auth/profile` - Get user profile (protected)
+
+### Templates
+- `POST /api/templates` - Create a new template (protected)
+- `GET /api/templates` - Get all user templates (protected)
+- `GET /api/templates/:id` - Get a specific template (protected)
+- `PUT /api/templates/:id` - Update a template (protected)
+- `DELETE /api/templates/:id` - Delete a template (protected)
+
+### Prebuilt Templates
+- `GET /api/prebuilt` - Get all prebuilt templates (protected)
+- `GET /api/prebuilt/:id` - Get a specific prebuilt template (protected)
 
 ## Development
 
@@ -174,4 +246,4 @@ npm run preview
 
 ---
 
-Built with ❤️ using React + Vite
+Built with ❤️ using React + Vite + Node.js + Express + MongoDB

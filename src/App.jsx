@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import {
   DndContext,
@@ -14,6 +14,8 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { Link } from 'react-router-dom';
+import { prebuiltAPI, templateAPI } from './utils/api';
 import BlockPalette from './components/BlockPalette';
 import Canvas from './components/Canvas';
 import PreviewPane from './components/PreviewPane';
@@ -24,6 +26,203 @@ export default function App() {
   const [blocks, setBlocks] = useState([]);
   const [selectedBlockId, setSelectedBlockId] = useState(null);
   const [view, setView] = useState('editor'); // 'editor', 'preview', 'export', 'spa'
+  const [templateName, setTemplateName] = useState('Untitled Template');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [showPrebuilt, setShowPrebuilt] = useState(false);
+  const [prebuiltTemplates, setPrebuiltTemplates] = useState([]);
+
+  // Check for template ID in URL params
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const templateId = urlParams.get('template');
+    
+    if (templateId) {
+      loadTemplate(templateId);
+    }
+  }, []);
+
+  // Fetch prebuilt templates
+  useEffect(() => {
+    if (showPrebuilt) {
+      fetchPrebuiltTemplates();
+    }
+  }, [showPrebuilt]);
+
+  const fetchPrebuiltTemplates = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/';
+        return;
+      }
+
+      const response = await prebuiltAPI.getAll();
+      setPrebuiltTemplates(response.data.templates);
+    } catch (err) {
+      if (err.response && err.response.data) {
+        setError(err.response.data.message || 'Failed to fetch prebuilt templates');
+      } else {
+        setError('Network error. Please try again.');
+      }
+    }
+  };
+
+  const loadPrebuiltTemplate = (template) => {
+    setTemplateName(template.name);
+    setBlocks(template.blocks);
+    setShowPrebuilt(false);
+  };
+
+  const loadTemplate = async (templateId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/';
+        return;
+      }
+
+      setLoading(true);
+      const response = await templateAPI.getById(templateId);
+
+      setTemplateName(response.data.template.name);
+      setBlocks(response.data.template.blocks);
+    } catch (err) {
+      if (err.response && err.response.data) {
+        setError(err.response.data.message || 'Failed to load template');
+      } else {
+        setError('Network error. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveTemplate = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/';
+        return;
+      }
+
+      if (blocks.length === 0) {
+        setError('Cannot save empty template');
+        return;
+      }
+
+      setLoading(true);
+      setError('');
+
+      const templateData = {
+        name: templateName,
+        blocks
+      };
+
+      // Check if we're updating an existing template
+      const urlParams = new URLSearchParams(window.location.search);
+      const templateId = urlParams.get('template');
+
+      let response;
+      if (templateId) {
+        // Update existing template
+        response = await templateAPI.update(templateId, templateData);
+      } else {
+        // Create new template
+        response = await templateAPI.create(templateData);
+      }
+
+      // If it's a new template, update the URL with the template ID
+      if (!templateId && response.data.template._id) {
+        window.history.replaceState(null, '', `?template=${response.data.template._id}`);
+      }
+      alert('Template saved successfully!');
+    } catch (err) {
+      if (err.response && err.response.data) {
+        setError(err.response.data.message || 'Failed to save template');
+      } else {
+        setError('Network error. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    // Generate HTML for the current template
+    let html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${templateName}</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #f5f5f5;
+    }
+    .email-content {
+      background-color: white;
+      padding: 20px;
+    }
+    button {
+      cursor: pointer;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="email-content">
+`;
+
+    blocks.forEach((block) => {
+      const style = `style="background-color: ${block.styles.backgroundColor}; padding: ${block.styles.padding}; font-size: ${block.styles.fontSize}; color: ${block.styles.color}; margin: 8px 0; border-radius: 4px;"`;
+
+      switch (block.type) {
+        case 'text':
+          html += `      <p ${style}>${block.content}</p>\n`;
+          break;
+        case 'image':
+          html += `      <div ${style}><img src="${block.content}" alt="Email content" /></div>\n`;
+          break;
+        case 'button':
+          html += `      <div ${style}><a href="${block.styles.link || '#'}" style="display: inline-block; padding: 10px 20px; background-color: ${block.styles.backgroundColor}; color: ${block.styles.color}; text-decoration: none; border-radius: 4px;">${block.content}</a></div>\n`;
+          break;
+        case 'divider':
+          html += `      <hr style="margin: 8px 0; border: none; border-top: 1px solid ${block.styles.color};" />\n`;
+          break;
+        case 'spacer':
+          html += `      <div style="height: 32px;"></div>\n`;
+          break;
+        default:
+          break;
+      }
+    });
+
+    html += `    </div>
+  </div>
+</body>
+</html>`;
+
+    navigator.clipboard.writeText(html)
+      .then(() => {
+        alert('Email HTML copied to clipboard!');
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+        setError('Failed to copy to clipboard');
+      });
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -91,10 +290,42 @@ export default function App() {
 
   const selectedBlock = blocks.find((b) => b.id === selectedBlockId);
 
+  const logout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/';
+  };
+
   return (
     <div className="app">
       <header className="app-header">
         <h1>Email Template Builder</h1>
+        <div className="header-controls">
+          <input
+            type="text"
+            value={templateName}
+            onChange={(e) => setTemplateName(e.target.value)}
+            className="template-name-input"
+            placeholder="Template name"
+          />
+        </div>
+      </header>
+      
+      {/* Secondary navigation bar for actions */}
+      <nav className="secondary-nav">
+        <div className="nav-actions">
+          <button onClick={() => setShowPrebuilt(true)} className="btn-secondary">
+            Prebuilt Templates
+          </button>
+          <button onClick={saveTemplate} className="save-btn" disabled={loading}>
+            {loading ? 'Saving...' : 'Save Template'}
+          </button>
+          <button onClick={copyToClipboard} className="copy-btn">
+            Copy HTML
+          </button>
+          <button onClick={logout} className="logout-btn">
+            Logout
+          </button>
+        </div>
         <div className="view-tabs">
           <button
             className={`tab ${view === 'editor' ? 'active' : ''}`}
@@ -120,8 +351,43 @@ export default function App() {
           >
             SPA
           </button>
+          <Link to="/history" className="history-link">
+            History
+          </Link>
         </div>
-      </header>
+      </nav>
+
+      {error && <div className="error-message" style={{margin: '1rem 2rem'}}>{error}</div>}
+
+      {/* Prebuilt Templates Modal */}
+      {showPrebuilt && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Prebuilt Templates</h2>
+              <button className="close-btn" onClick={() => setShowPrebuilt(false)}>×</button>
+            </div>
+            <div className="prebuilt-templates-grid">
+              {prebuiltTemplates.length > 0 ? (
+                prebuiltTemplates.map((template, index) => (
+                  <div key={index} className="prebuilt-template-card">
+                    <h3>{template.name}</h3>
+                    <p>{template.blocks.length} blocks</p>
+                    <button 
+                      className="btn-secondary"
+                      onClick={() => loadPrebuiltTemplate(template)}
+                    >
+                      Use Template
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p>Loading prebuilt templates...</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {view === 'editor' && (
         <DndContext

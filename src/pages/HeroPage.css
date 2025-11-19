@@ -84,6 +84,8 @@ html, body, #root {
   background:linear-gradient(90deg, var(--accent), #5ec8ff 120%);
   color: #071022;
   box-shadow: 0 6px 24px rgba(124,92,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.12);
+  border: none;
+  cursor: pointer;
 }
 
 .btn-primary:hover{transform:translateY(-3px)}
@@ -92,6 +94,7 @@ html, body, #root {
   color:var(--muted);
   background: transparent;
   border:1px solid rgba(255,255,255,0.06);
+  cursor: pointer;
 }
 
 .btn-ghost:hover{transform:translateY(-2px); background: rgba(255,255,255,0.02)}

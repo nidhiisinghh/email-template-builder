@@ -1,7 +1,20 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './HeroPage.css';
 
 export default function Hero() {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    // Check if user is already logged in
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/app');
+    } else {
+      navigate('/auth');
+    }
+  };
+
   return (
     <header className="hero-root" role="banner">
       <div className="hero-inner">
@@ -13,9 +26,9 @@ export default function Hero() {
           </p>
 
           <div className="hero-ctas">
-            <a className="btn btn-primary" href="/app" aria-label="Get started — go to app">
+            <button className="btn btn-primary" onClick={handleGetStarted} aria-label="Get started — go to app">
               Get started
-            </a>
+            </button>
             <a className="btn btn-ghost" href="#features" aria-label="See features">
               See features
             </a>
