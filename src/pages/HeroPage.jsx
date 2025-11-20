@@ -1,13 +1,28 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authAPI } from '../utils/api';
 import './HeroPage.css';
 
 export default function Hero() {
   const navigate = useNavigate();
 
-  const handleGetStarted = () => {
-    // Always redirect to auth page - no automatic login
-    navigate('/auth');
+  const handleGetStarted = async () => {
+    const token = localStorage.getItem('token');
+    
+    if (token) {
+      try {
+        // Validate token by making a request to the profile endpoint
+        await authAPI.getProfile();
+        // If token is valid, redirect to app
+        navigate('/app');
+      } catch (error) {
+        // Token is invalid or expired, redirect to auth
+        navigate('/auth');
+      }
+    } else {
+      // No token found, redirect to auth
+      navigate('/auth');
+    }
   };
 
   return (

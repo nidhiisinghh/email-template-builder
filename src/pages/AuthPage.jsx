@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../utils/api';
 import '../App.css';
@@ -13,11 +13,6 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-
-  // Clear any existing tokens when page loads
-  useEffect(() => {
-    localStorage.removeItem('token');
-  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -55,8 +50,12 @@ export default function AuthPage() {
     <div className="auth-page">
       <div className="auth-container">
         <div className="auth-header">
-          <h1>{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
-          <p>{isLogin ? 'Sign in to continue' : 'Sign up to get started'}</p>
+          <h1>{isLogin ? 'Login' : 'Register'}</h1>
+          <p>
+            {isLogin
+              ? 'Welcome back! Please login to continue.'
+              : 'Create your account to get started.'}
+          </p>
         </div>
 
         {error && <div className="error-message">{error}</div>}
@@ -72,7 +71,7 @@ export default function AuthPage() {
                 value={formData.username}
                 onChange={handleChange}
                 required
-                placeholder="Enter your username"
+                placeholder="Username"
               />
             </div>
           )}
@@ -86,7 +85,7 @@ export default function AuthPage() {
               value={formData.email}
               onChange={handleChange}
               required
-              placeholder="Enter your email"
+              placeholder="Email"
             />
           </div>
 
@@ -100,12 +99,12 @@ export default function AuthPage() {
               onChange={handleChange}
               required
               minLength="6"
-              placeholder="Enter your password"
+              placeholder="Password"
             />
           </div>
 
           <button type="submit" className="auth-btn" disabled={loading}>
-            {loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Sign Up')}
+            {loading ? 'Loading...' : (isLogin ? 'Login' : 'Register')}
           </button>
         </form>
 
@@ -113,7 +112,7 @@ export default function AuthPage() {
           <p>
             {isLogin ? "Don't have an account?" : "Already have an account?"}
             <button onClick={() => setIsLogin(!isLogin)}>
-              {isLogin ? 'Sign Up' : 'Sign In'}
+              {isLogin ? 'Register' : 'Login'}
             </button>
           </p>
         </div>

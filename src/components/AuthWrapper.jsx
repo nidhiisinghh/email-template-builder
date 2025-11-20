@@ -1,22 +1,47 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authAPI } from '../utils/api';
 
 const AuthWrapper = ({ children }) => {
-  useEffect(() => {
-    // Check if user is authenticated
-    const token = localStorage.getItem('token');
-    
-    // If no token found, redirect to auth page
-    if (!token) {
-      window.location.href = '/auth';
-    }
-  }, []);
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const navigate = useNavigate();
 
-  // If token exists, render children
-  const token = localStorage.getItem('token');
-  if (token) {
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      const token = localStorage.getItem('token');
+      
+      // If no token found, redirect to auth page
+      if (!token) {
+        setIsAuthenticated(false);
+        navigate('/auth');
+        return;
+      }
+      
+      try {
+        // Validate token by making a request to the profile endpoint
+        await authAPI.getProfile();
+        setIsAuthenticated(true);
+      } catch (error) {
+        // Token is invalid or expired
+        localStorage.removeItem('token');
+        setIsAuthenticated(false);
+        navigate('/auth');
+      }
+    };
+
+    checkAuthStatus();
+  }, [navigate]);
+
+  // Show nothing while checking auth status
+  if (isAuthenticated === null) {
+    return null;
+  }
+
+  // If authenticated, render children
+  if (isAuthenticated) {
     return children;
   }
-  
+
   // Return null while redirecting
   return null;
 };

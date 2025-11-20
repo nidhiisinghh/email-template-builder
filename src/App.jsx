@@ -287,8 +287,8 @@ export default function App() {
   const logout = () => {
     // Clear all user-related data
     localStorage.removeItem('token');
-    // Redirect to home page
-    window.location.href = '/';
+    // Redirect to auth page
+    window.location.href = '/auth';
   };
 
   return (
