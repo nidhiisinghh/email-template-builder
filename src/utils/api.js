@@ -6,40 +6,41 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// Add a request interceptor to include auth token
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+// Function to get auth headers
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
 // Auth API
 export const authAPI = {
   register: (userData) => api.post('/auth/register', userData),
   login: (credentials) => api.post('/auth/login', credentials),
-  getProfile: () => api.get('/auth/profile'),
+  getProfile: () => api.get('/auth/profile', { headers: getAuthHeaders() }),
 };
 
 // Template API
 export const templateAPI = {
-  getAll: () => api.get('/templates'),
-  getById: (id) => api.get(`/templates/${id}`),
-  create: (templateData) => api.post('/templates', templateData),
-  update: (id, templateData) => api.put(`/templates/${id}`, templateData),
-  delete: (id) => api.delete(`/templates/${id}`),
+  getAll: () => api.get('/templates', { headers: getAuthHeaders() }),
+  getById: (id) => api.get(`/templates/${id}`, { headers: getAuthHeaders() }),
+  create: (templateData) => api.post('/templates', templateData, { headers: getAuthHeaders() }),
+  update: (id, templateData) => api.put(`/templates/${id}`, templateData, { headers: getAuthHeaders() }),
+  delete: (id) => api.delete(`/templates/${id}`, { headers: getAuthHeaders() }),
+};
+
+// Send email function
+export const sendTemplateEmail = async (templateId, recipientEmail, subject) => {
+  const response = await api.post(`/templates/${templateId}/send`, {
+    recipientEmail,
+    subject
+  }, { headers: getAuthHeaders() });
+  return response.data;
 };
 
 // Prebuilt Template API
 export const prebuiltAPI = {
-  getAll: () => api.get('/prebuilt'),
-  getById: (id) => api.get(`/prebuilt/${id}`),
+  getAll: () => api.get('/prebuilt', { headers: getAuthHeaders() }),
+  getById: (id) => api.get(`/prebuilt/${id}`, { headers: getAuthHeaders() }),
 };
 
 export default api;

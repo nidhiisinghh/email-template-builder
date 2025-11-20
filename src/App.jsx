@@ -31,6 +31,7 @@ export default function App() {
   const [error, setError] = useState('');
   const [showPrebuilt, setShowPrebuilt] = useState(false);
   const [prebuiltTemplates, setPrebuiltTemplates] = useState([]);
+  const [currentTemplateId, setCurrentTemplateId] = useState(null);
 
   // Check for template ID in URL params
   useEffect(() => {
@@ -38,6 +39,7 @@ export default function App() {
     const templateId = urlParams.get('template');
     
     if (templateId) {
+      setCurrentTemplateId(templateId);
       loadTemplate(templateId);
     }
   }, []);
@@ -51,12 +53,6 @@ export default function App() {
 
   const fetchPrebuiltTemplates = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        window.location.href = '/';
-        return;
-      }
-
       const response = await prebuiltAPI.getAll();
       setPrebuiltTemplates(response.data.templates);
     } catch (err) {
@@ -76,12 +72,6 @@ export default function App() {
 
   const loadTemplate = async (templateId) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        window.location.href = '/';
-        return;
-      }
-
       setLoading(true);
       const response = await templateAPI.getById(templateId);
 
@@ -100,12 +90,6 @@ export default function App() {
 
   const saveTemplate = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        window.location.href = '/';
-        return;
-      }
-
       if (blocks.length === 0) {
         setError('Cannot save empty template');
         return;
@@ -134,6 +118,7 @@ export default function App() {
 
       // If it's a new template, update the URL with the template ID
       if (!templateId && response.data.template._id) {
+        setCurrentTemplateId(response.data.template._id);
         window.history.replaceState(null, '', `?template=${response.data.template._id}`);
       }
       alert('Template saved successfully!');
@@ -236,6 +221,14 @@ export default function App() {
   const handleDragEnd = (event) => {
     const { active, over } = event;
 
+    // Handle blocks dragged from the palette
+    if (active.data?.current?.isNew) {
+      const blockType = active.data.current.type;
+      addBlock(blockType);
+      return;
+    }
+
+    // Handle reordering of existing blocks
     if (over && active.id !== over.id) {
       const oldIndex = blocks.findIndex((b) => b.id === active.id);
       const newIndex = blocks.findIndex((b) => b.id === over.id);
@@ -257,6 +250,7 @@ export default function App() {
         padding: '16px',
         fontSize: '16px',
         color: '#000000',
+        ...(blockType === 'button' && { link: '#' }), // Add default link for button blocks
       },
     };
     setBlocks([...blocks, newBlock]);
@@ -291,7 +285,9 @@ export default function App() {
   const selectedBlock = blocks.find((b) => b.id === selectedBlockId);
 
   const logout = () => {
+    // Clear all user-related data
     localStorage.removeItem('token');
+    // Redirect to home page
     window.location.href = '/';
   };
 
@@ -408,6 +404,7 @@ export default function App() {
                 onUpdateBlock={updateBlock}
                 onDeleteBlock={deleteBlock}
                 onMoveBlock={moveBlock}
+                onAddBlock={addBlock}
               />
               {selectedBlock && (
                 <PropertyPanel
@@ -423,7 +420,7 @@ export default function App() {
 
       {view === 'preview' && <PreviewPane blocks={blocks} />}
 
-      {view === 'export' && <ExportPane blocks={blocks} />}
+      {view === 'export' && <ExportPane blocks={blocks} templateId={currentTemplateId} />}
 
       {view === 'spa' && <SPABuilder blocks={blocks} />}
     </div>
@@ -487,6 +484,11 @@ function PropertyPanel({ block, onUpdateBlock, onMoveBlock }) {
               }
               placeholder="https://example.com"
             />
+          </div>
+          <div className="property-group">
+            <p style={{ fontSize: '0.85rem', color: '#666', fontStyle: 'italic' }}>
+              Note: Button will appear with default styling if no colors are set
+            </p>
           </div>
         </>
       )}

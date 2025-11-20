@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../utils/api';
 import '../App.css';
@@ -13,6 +13,11 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  // Clear any existing tokens when page loads
+  useEffect(() => {
+    localStorage.removeItem('token');
+  }, []);
 
   const handleChange = (e) => {
     setFormData({

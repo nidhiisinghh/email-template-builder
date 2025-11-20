@@ -6,13 +6,8 @@ export default function Hero() {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    // Check if user is already logged in
-    const token = localStorage.getItem('token');
-    if (token) {
-      navigate('/app');
-    } else {
-      navigate('/auth');
-    }
+    // Always redirect to auth page - no automatic login
+    navigate('/auth');
   };
 
   return (
