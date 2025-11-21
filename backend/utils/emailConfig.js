@@ -1,11 +1,10 @@
 const nodemailer = require('nodemailer');
 
-// Create reusable transporter object using SMTP transport
 const createTransporter = () => {
   return nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
-    secure: false, // true for 465, false for other ports
+    secure: false, 
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASSWORD,
@@ -13,7 +12,6 @@ const createTransporter = () => {
   });
 };
 
-// Generate HTML from blocks (same logic as frontend)
 const generateEmailHTML = (blocks) => {
   let html = `<!DOCTYPE html>
 <html>

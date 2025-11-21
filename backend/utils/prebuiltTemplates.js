@@ -1,5 +1,3 @@
-// Prebuilt email templates for different use cases
-
 const prebuiltTemplates = [
   {
     name: "Job Proposal",

@@ -33,14 +33,27 @@ export default function App() {
   const [prebuiltTemplates, setPrebuiltTemplates] = useState([]);
   const [currentTemplateId, setCurrentTemplateId] = useState(null);
 
-  // Check for template ID in URL params
+  // Load draft or template on component mount
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const templateId = urlParams.get('template');
     
     if (templateId) {
+      // Load existing template
       setCurrentTemplateId(templateId);
       loadTemplate(templateId);
+    } else {
+      // Check for draft
+      const savedDraft = localStorage.getItem('emailBuilderDraft');
+      if (savedDraft) {
+        try {
+          const draft = JSON.parse(savedDraft);
+          setBlocks(draft.blocks || []);
+          setTemplateName(draft.templateName || 'Untitled Template');
+        } catch (e) {
+          console.error('Failed to parse draft', e);
+        }
+      }
     }
   }, []);
 
@@ -50,6 +63,22 @@ export default function App() {
       fetchPrebuiltTemplates();
     }
   }, [showPrebuilt]);
+
+  // Save draft whenever blocks or template name change (only for new templates)
+  useEffect(() => {
+    // Only save draft if we're not editing an existing template
+    const urlParams = new URLSearchParams(window.location.search);
+    const templateId = urlParams.get('template');
+    
+    if (!templateId && (blocks.length > 0 || templateName !== 'Untitled Template')) {
+      const draft = {
+        blocks,
+        templateName,
+        timestamp: Date.now()
+      };
+      localStorage.setItem('emailBuilderDraft', JSON.stringify(draft));
+    }
+  }, [blocks, templateName]);
 
   const fetchPrebuiltTemplates = async () => {
     try {
@@ -120,6 +149,9 @@ export default function App() {
       if (!templateId && response.data.template._id) {
         setCurrentTemplateId(response.data.template._id);
         window.history.replaceState(null, '', `?template=${response.data.template._id}`);
+        
+        // Clear draft since we've now saved the template
+        localStorage.removeItem('emailBuilderDraft');
       }
       alert('Template saved successfully!');
     } catch (err) {
@@ -130,6 +162,15 @@ export default function App() {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const clearDraft = () => {
+    if (window.confirm('Are you sure you want to clear your draft? This will delete all unsaved changes.')) {
+      localStorage.removeItem('emailBuilderDraft');
+      setBlocks([]);
+      setTemplateName('Untitled Template');
+      setSelectedBlockId(null);
     }
   };
 
@@ -317,6 +358,9 @@ export default function App() {
           </button>
           <button onClick={copyToClipboard} className="copy-btn">
             Copy HTML
+          </button>
+          <button onClick={clearDraft} className="btn-secondary clear-draft-btn">
+            Clear Draft
           </button>
           <button onClick={logout} className="logout-btn">
             Logout

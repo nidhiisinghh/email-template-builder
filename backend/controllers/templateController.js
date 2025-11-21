@@ -1,7 +1,6 @@
 const Template = require('../models/Template');
 const { createTransporter, generateEmailHTML } = require('../utils/emailConfig');
 
-// Create a new template
 exports.createTemplate = async (req, res) => {
   try {
     const { name, blocks } = req.body;
@@ -25,7 +24,6 @@ exports.createTemplate = async (req, res) => {
   }
 };
 
-// Get all templates for a user
 exports.getUserTemplates = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -42,7 +40,6 @@ exports.getUserTemplates = async (req, res) => {
   }
 };
 
-// Get a specific template by ID
 exports.getTemplateById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -63,7 +60,6 @@ exports.getTemplateById = async (req, res) => {
   }
 };
 
-// Update a template
 exports.updateTemplate = async (req, res) => {
   try {
     const { id } = req.params;
@@ -90,7 +86,6 @@ exports.updateTemplate = async (req, res) => {
   }
 };
 
-// Delete a template
 exports.deleteTemplate = async (req, res) => {
   try {
     const { id } = req.params;
@@ -111,14 +106,12 @@ exports.deleteTemplate = async (req, res) => {
   }
 };
 
-// Send template as email
 exports.sendTemplateEmail = async (req, res) => {
   try {
     const { id } = req.params;
     const { recipientEmail, subject } = req.body;
     const userId = req.user._id;
 
-    // Validate input
     if (!recipientEmail) {
       return res.status(400).json({ message: 'Recipient email is required' });
     }
@@ -127,27 +120,22 @@ exports.sendTemplateEmail = async (req, res) => {
       return res.status(400).json({ message: 'Email subject is required' });
     }
 
-    // Find the template
     const template = await Template.findOne({ _id: id, userId });
 
     if (!template) {
       return res.status(404).json({ message: 'Template not found' });
     }
 
-    // Generate HTML from template blocks
     const htmlContent = generateEmailHTML(template.blocks);
 
-    // Validate email configuration
     if (!process.env.EMAIL_HOST || !process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
       return res.status(500).json({ 
         message: 'Email configuration is incomplete. Please check your .env file.' 
       });
     }
 
-    // Create transporter
     const transporter = createTransporter();
 
-    // Send email
     const info = await transporter.sendMail({
       from: process.env.EMAIL_FROM || '"Email Builder" <no-reply@example.com>',
       to: recipientEmail,
@@ -165,7 +153,6 @@ exports.sendTemplateEmail = async (req, res) => {
   } catch (error) {
     console.error('Error sending email:', error);
     
-    // Handle specific nodemailer errors
     if (error.code === 'EAUTH') {
       return res.status(500).json({ 
         message: 'Email authentication failed. Please check your email credentials in .env file' 
