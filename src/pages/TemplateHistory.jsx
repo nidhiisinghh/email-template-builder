@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { templateAPI } from '../utils/api';
-import '../App.css';
+import './TemplateHistory.css';
 
 export default function TemplateHistory() {
   const [templates, setTemplates] = useState([]);
@@ -45,8 +45,6 @@ export default function TemplateHistory() {
 
     try {
       await templateAPI.delete(templateId);
-
-      // Remove template from state
       setTemplates(templates.filter(template => template._id !== templateId));
     } catch (err) {
       if (err.response && err.response.data) {
@@ -70,11 +68,7 @@ export default function TemplateHistory() {
   if (loading) {
     return (
       <div className="template-history">
-        <div className="history-header">
-          <h1>Template History</h1>
-          <button onClick={logout} className="btn-secondary">Logout</button>
-        </div>
-        <div className="empty-history">Loading templates...</div>
+        <div className="loading-container">Loading templates...</div>
       </div>
     );
   }
@@ -82,7 +76,10 @@ export default function TemplateHistory() {
   return (
     <div className="template-history">
       <div className="history-header">
-        <h1>Template History</h1>
+        <div>
+          <Link to="/app" className="back-link">← Back to Editor</Link>
+          <h1>Template History</h1>
+        </div>
         <button onClick={logout} className="btn-secondary">Logout</button>
       </div>
 
@@ -91,7 +88,7 @@ export default function TemplateHistory() {
       {templates.length === 0 ? (
         <div className="empty-history">
           <p>No templates found. Create your first template!</p>
-          <button onClick={() => navigate('/app')} className="btn-secondary">
+          <button onClick={() => navigate('/app')} className="btn-primary large">
             Create Template
           </button>
         </div>
@@ -105,13 +102,13 @@ export default function TemplateHistory() {
                 <span>{template.blocks.length} blocks</span>
               </div>
               <div className="template-actions">
-                <button 
+                <button
                   onClick={() => loadTemplate(template._id)}
                   className="btn-secondary"
                 >
-                  Load
+                  Edit
                 </button>
-                <button 
+                <button
                   onClick={() => deleteTemplate(template._id)}
                   className="btn-danger"
                 >

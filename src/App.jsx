@@ -33,52 +33,70 @@ export default function App() {
   const [prebuiltTemplates, setPrebuiltTemplates] = useState([]);
   const [currentTemplateId, setCurrentTemplateId] = useState(null);
 
-  // Load draft or template on component mount
+  const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (blocks.length > 0 || templateName !== 'Untitled Template') {
+        const draftData = {
+          templateName,
+          blocks,
+          timestamp: new Date().toISOString()
+        };
+        localStorage.setItem('emailTemplateDraft', JSON.stringify(draftData));
+      }
+      
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [templateName, blocks]);
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const templateId = urlParams.get('template');
     
-    if (templateId) {
-      // Load existing template
-      setCurrentTemplateId(templateId);
-      loadTemplate(templateId);
-    } else {
-      // Check for draft
-      const savedDraft = localStorage.getItem('emailBuilderDraft');
-      if (savedDraft) {
+    if (!templateId) {
+      const draftData = localStorage.getItem('emailTemplateDraft');
+      if (draftData) {
         try {
-          const draft = JSON.parse(savedDraft);
-          setBlocks(draft.blocks || []);
-          setTemplateName(draft.templateName || 'Untitled Template');
+          const parsedDraft = JSON.parse(draftData);
+          if (parsedDraft && typeof parsedDraft === 'object') {
+            if (Array.isArray(parsedDraft.blocks) && parsedDraft.blocks.length > 0) {
+              setTemplateName(parsedDraft.templateName || 'Untitled Template');
+              setBlocks(parsedDraft.blocks);
+              setSuccessMessage('Draft loaded successfully');
+              setTimeout(() => setSuccessMessage(''), 3000);
+            } else if (parsedDraft.templateName && parsedDraft.templateName !== 'Untitled Template') {
+              setTemplateName(parsedDraft.templateName);
+            }
+          }
         } catch (e) {
-          console.error('Failed to parse draft', e);
+          console.error('Failed to parse draft data', e);
+          localStorage.removeItem('emailTemplateDraft');
+          setSuccessMessage('Corrupted draft cleared');
+          setTimeout(() => setSuccessMessage(''), 3000);
         }
       }
     }
+    
+    if (templateId) {
+      setCurrentTemplateId(templateId);
+      loadTemplate(templateId);
+    }
   }, []);
 
-  // Fetch prebuilt templates
   useEffect(() => {
     if (showPrebuilt) {
       fetchPrebuiltTemplates();
     }
   }, [showPrebuilt]);
-
-  // Save draft whenever blocks or template name change (only for new templates)
-  useEffect(() => {
-    // Only save draft if we're not editing an existing template
-    const urlParams = new URLSearchParams(window.location.search);
-    const templateId = urlParams.get('template');
-    
-    if (!templateId && (blocks.length > 0 || templateName !== 'Untitled Template')) {
-      const draft = {
-        blocks,
-        templateName,
-        timestamp: Date.now()
-      };
-      localStorage.setItem('emailBuilderDraft', JSON.stringify(draft));
-    }
-  }, [blocks, templateName]);
 
   const fetchPrebuiltTemplates = async () => {
     try {
@@ -138,10 +156,8 @@ export default function App() {
 
       let response;
       if (templateId) {
-        // Update existing template
         response = await templateAPI.update(templateId, templateData);
       } else {
-        // Create new template
         response = await templateAPI.create(templateData);
       }
 
@@ -149,10 +165,9 @@ export default function App() {
       if (!templateId && response.data.template._id) {
         setCurrentTemplateId(response.data.template._id);
         window.history.replaceState(null, '', `?template=${response.data.template._id}`);
-        
-        // Clear draft since we've now saved the template
-        localStorage.removeItem('emailBuilderDraft');
       }
+      
+      localStorage.removeItem('emailTemplateDraft');
       alert('Template saved successfully!');
     } catch (err) {
       if (err.response && err.response.data) {
@@ -165,17 +180,7 @@ export default function App() {
     }
   };
 
-  const clearDraft = () => {
-    if (window.confirm('Are you sure you want to clear your draft? This will delete all unsaved changes.')) {
-      localStorage.removeItem('emailBuilderDraft');
-      setBlocks([]);
-      setTemplateName('Untitled Template');
-      setSelectedBlockId(null);
-    }
-  };
-
   const copyToClipboard = () => {
-    // Generate HTML for the current template
     let html = `<!DOCTYPE html>
 <html>
 <head>
@@ -332,6 +337,21 @@ export default function App() {
     window.location.href = '/auth';
   };
 
+  const clearDraft = () => {
+    localStorage.removeItem('emailTemplateDraft');
+    setTemplateName('Untitled Template');
+    setBlocks([]);
+    // Only show success message if there was actually a draft to clear
+    if (localStorage.getItem('emailTemplateDraft') === null) {
+      // Set success message for draft cleared
+      setSuccessMessage('Draft cleared successfully');
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } else {
+      setError('No draft to clear');
+      setTimeout(() => setError(''), 3000);
+    }
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -359,7 +379,7 @@ export default function App() {
           <button onClick={copyToClipboard} className="copy-btn">
             Copy HTML
           </button>
-          <button onClick={clearDraft} className="btn-secondary clear-draft-btn">
+          <button onClick={clearDraft} className="btn-secondary">
             Clear Draft
           </button>
           <button onClick={logout} className="logout-btn">
@@ -397,7 +417,11 @@ export default function App() {
         </div>
       </nav>
 
+      {/* Display error messages */}
       {error && <div className="error-message" style={{margin: '1rem 2rem'}}>{error}</div>}
+      
+      {/* Display success messages */}
+      {successMessage && <div className="success-message" style={{margin: '1rem 2rem'}}>{successMessage}</div>}
 
       {/* Prebuilt Templates Modal */}
       {showPrebuilt && (
