@@ -45,14 +45,14 @@ export default function App() {
         };
         localStorage.setItem('emailTemplateDraft', JSON.stringify(draftData));
       }
-      
+
       e.preventDefault();
       e.returnValue = '';
       return '';
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
-    
+
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
@@ -61,7 +61,7 @@ export default function App() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const templateId = urlParams.get('template');
-    
+
     if (!templateId) {
       const draftData = localStorage.getItem('emailTemplateDraft');
       if (draftData) {
@@ -85,7 +85,7 @@ export default function App() {
         }
       }
     }
-    
+
     if (templateId) {
       setCurrentTemplateId(templateId);
       loadTemplate(templateId);
@@ -166,7 +166,7 @@ export default function App() {
         setCurrentTemplateId(response.data.template._id);
         window.history.replaceState(null, '', `?template=${response.data.template._id}`);
       }
-      
+
       localStorage.removeItem('emailTemplateDraft');
       alert('Template saved successfully!');
     } catch (err) {
@@ -366,7 +366,7 @@ export default function App() {
           />
         </div>
       </header>
-      
+
       {/* Secondary navigation bar for actions */}
       <nav className="secondary-nav">
         <div className="nav-actions">
@@ -411,17 +411,20 @@ export default function App() {
           >
             SPA
           </button>
-          <Link to="/history" className="history-link">
-            History
+          <Link to="/saved" className="history-link">
+            Saved
+          </Link>
+          <Link to="/shared-templates" className="history-link">
+            Shared
           </Link>
         </div>
       </nav>
 
       {/* Display error messages */}
-      {error && <div className="error-message" style={{margin: '1rem 2rem'}}>{error}</div>}
-      
+      {error && <div className="error-message" style={{ margin: '1rem 2rem' }}>{error}</div>}
+
       {/* Display success messages */}
-      {successMessage && <div className="success-message" style={{margin: '1rem 2rem'}}>{successMessage}</div>}
+      {successMessage && <div className="success-message" style={{ margin: '1rem 2rem' }}>{successMessage}</div>}
 
       {/* Prebuilt Templates Modal */}
       {showPrebuilt && (
@@ -437,7 +440,7 @@ export default function App() {
                   <div key={index} className="prebuilt-template-card">
                     <h3>{template.name}</h3>
                     <p>{template.blocks.length} blocks</p>
-                    <button 
+                    <button
                       className="btn-secondary"
                       onClick={() => loadPrebuiltTemplate(template)}
                     >
@@ -591,10 +594,10 @@ function PropertyPanel({ block, onUpdateBlock, onMoveBlock }) {
         <label>Font Size (px)</label>
         <input
           type="number"
-          value={parseInt(block.styles.fontSize)}
+          value={block.styles.fontSize ? parseInt(block.styles.fontSize) : ''}
           onChange={(e) =>
             onUpdateBlock(block.id, {
-              styles: { ...block.styles, fontSize: `${e.target.value}px` },
+              styles: { ...block.styles, fontSize: e.target.value ? `${e.target.value}px` : '16px' },
             })
           }
         />
@@ -604,10 +607,10 @@ function PropertyPanel({ block, onUpdateBlock, onMoveBlock }) {
         <label>Padding (px)</label>
         <input
           type="number"
-          value={parseInt(block.styles.padding)}
+          value={block.styles.padding ? parseInt(block.styles.padding) : ''}
           onChange={(e) =>
             onUpdateBlock(block.id, {
-              styles: { ...block.styles, padding: `${e.target.value}px` },
+              styles: { ...block.styles, padding: e.target.value ? `${e.target.value}px` : '16px' },
             })
           }
         />

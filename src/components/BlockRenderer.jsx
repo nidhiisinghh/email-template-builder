@@ -48,11 +48,14 @@ export default function BlockRenderer({ block }) {
     case 'button':
       return (
         <div style={blockStyle} className="block-button">
-          <button
+          <a
+            href={block.styles.link || '#'}
             style={{
+              display: 'inline-block',
               padding: '10px 20px',
               backgroundColor: block.styles.backgroundColor || '#f0f0f0',
               color: block.styles.color || '#333333',
+              textDecoration: 'none',
               border: '1px solid #cccccc',
               borderRadius: '4px',
               cursor: 'pointer',
@@ -61,7 +64,7 @@ export default function BlockRenderer({ block }) {
             }}
           >
             {block.content || 'Click Me'}
-          </button>
+          </a>
         </div>
       );
 

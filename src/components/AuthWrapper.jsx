@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../utils/api';
+import { useShare } from '../contexts/ShareContext';
 
 const AuthWrapper = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const { pendingShares } = useShare();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,9 +39,23 @@ const AuthWrapper = ({ children }) => {
     return null;
   }
 
-  // If authenticated, render children
+  // If authenticated, render children with pending shares context
   if (isAuthenticated) {
-    return children;
+    return (
+      <>
+        {pendingShares.length > 0 && (
+          <div className="pending-shares-notification">
+            <div className="notification-content">
+              <p>You have {pendingShares.length} pending template share request(s)</p>
+              <button onClick={() => navigate('/pending-shares')} className="btn-primary">
+                View Requests
+              </button>
+            </div>
+          </div>
+        )}
+        {children}
+      </>
+    );
   }
 
   // Return null while redirecting

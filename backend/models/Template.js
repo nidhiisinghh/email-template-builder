@@ -28,6 +28,35 @@ const templateSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
+  // Fields for template sharing
+  sharedWith: [{
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    email: String,
+    status: { 
+      type: String, 
+      enum: ['pending', 'accepted', 'rejected'], 
+      default: 'pending' 
+    },
+    sharedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  sharedBy: {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    email: String
+  },
+  shareStatus: {
+    type: String,
+    enum: ['private', 'shared', 'received'],
+    default: 'private'
+  },
   createdAt: {
     type: Date,
     default: Date.now

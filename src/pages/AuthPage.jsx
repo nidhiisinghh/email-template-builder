@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authAPI } from '../utils/api';
+import { useShare } from '../contexts/ShareContext';
 import '../App.css';
-import './HeroPage.css'; 
+import './HeroPage.css';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -14,6 +15,7 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { fetchPendingShares } = useShare();
 
   const handleChange = (e) => {
     setFormData({
@@ -33,6 +35,7 @@ export default function AuthPage() {
         : await authAPI.register(formData);
 
       localStorage.setItem('token', response.data.token);
+      await fetchPendingShares(); // Fetch shares immediately after login
       navigate('/app');
     } catch (err) {
       if (err.response && err.response.data) {
@@ -59,11 +62,11 @@ export default function AuthPage() {
           </div>
         </div>
       </div>
-      
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
+
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         minHeight: 'calc(100vh - 80px)',
         padding: '2rem'
       }}>

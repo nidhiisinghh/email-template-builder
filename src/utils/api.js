@@ -17,6 +17,8 @@ export const authAPI = {
   register: (userData) => api.post('/auth/register', userData),
   login: (credentials) => api.post('/auth/login', credentials),
   getProfile: () => api.get('/auth/profile', { headers: getAuthHeaders() }),
+  // New function to get all users for sharing dropdown
+  getAllUsers: () => api.get('/auth/users', { headers: getAuthHeaders() }),
 };
 
 // Template API
@@ -41,6 +43,16 @@ export const sendTemplateEmail = async (templateId, recipientEmail, subject) => 
 export const prebuiltAPI = {
   getAll: () => api.get('/prebuilt', { headers: getAuthHeaders() }),
   getById: (id) => api.get(`/prebuilt/${id}`, { headers: getAuthHeaders() }),
+};
+
+// Template Sharing API
+export const shareAPI = {
+  shareTemplate: (templateId, recipientEmail) =>
+    api.post(`/share/templates/${templateId}/share`, { recipientEmail }, { headers: getAuthHeaders() }),
+  getSharedTemplates: () => api.get('/share/templates/shared', { headers: getAuthHeaders() }),
+  respondToShare: (templateId, action) =>
+    api.put(`/share/templates/${templateId}/respond`, { action }, { headers: getAuthHeaders() }),
+  getPendingShares: () => api.get('/share/templates/shared/pending', { headers: getAuthHeaders() }),
 };
 
 export default api;

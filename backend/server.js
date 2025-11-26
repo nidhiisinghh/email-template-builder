@@ -8,6 +8,7 @@ dotenv.config({ path: './.env' });
 const authRoutes = require('./routes/authRoutes');
 const templateRoutes = require('./routes/templateRoutes');
 const prebuiltRoutes = require('./routes/prebuiltRoutes');
+const shareRoutes = require('./routes/shareRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -29,6 +30,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/emailbuil
 app.use('/api/auth', authRoutes);
 app.use('/api/templates', templateRoutes);
 app.use('/api/prebuilt', prebuiltRoutes);
+app.use('/api/share', shareRoutes);
 
 app.get('/api/health', (req, res) => {
   res.status(200).json({ message: 'Server is running!', timestamp: new Date().toISOString() });

@@ -28,7 +28,11 @@ exports.getUserTemplates = async (req, res) => {
   try {
     const userId = req.user._id;
     
-    const templates = await Template.find({ userId })
+    // Get only private and shared templates, not received ones
+    const templates = await Template.find({ 
+      userId,
+      shareStatus: { $in: ['private', 'shared'] }
+    })
       .sort({ createdAt: -1 });
 
     res.json({
@@ -45,7 +49,17 @@ exports.getTemplateById = async (req, res) => {
     const { id } = req.params;
     const userId = req.user._id;
 
-    const template = await Template.findOne({ _id: id, userId });
+    // First check if user owns the template
+    let template = await Template.findOne({ _id: id, userId });
+    
+    // If not found, check if it's shared with the user
+    if (!template) {
+      template = await Template.findOne({ 
+        _id: id,
+        'sharedWith.userId': userId,
+        'sharedWith.status': 'accepted'
+      });
+    }
 
     if (!template) {
       return res.status(404).json({ message: 'Template not found' });
@@ -128,7 +142,7 @@ exports.sendTemplateEmail = async (req, res) => {
 
     const htmlContent = generateEmailHTML(template.blocks);
 
-    if (!process.env.EMAIL_HOST || !process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+    if (!process.env.EMAIL_HOST || !process.env.EMAIL_PORT || !process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
       return res.status(500).json({ 
         message: 'Email configuration is incomplete. Please check your .env file.' 
       });

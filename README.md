@@ -212,6 +212,7 @@ Generate React component code from the template.
 - `GET /api/templates/:id` - Get a specific template (protected)
 - `PUT /api/templates/:id` - Update a template (protected)
 - `DELETE /api/templates/:id` - Delete a template (protected)
+- `POST /api/templates/:id/send` - Send template as email (protected)
 
 ### Prebuilt Templates
 - `GET /api/prebuilt` - Get all prebuilt templates (protected)
@@ -235,6 +236,10 @@ npm run preview
 - Firefox (latest)
 - Safari (latest)
 - Mobile browsers
+
+## Email Functionality
+
+The application includes built-in email sending capability using Nodemailer. For detailed configuration and usage instructions, see [EMAIL_FUNCTIONALITY.md](EMAIL_FUNCTIONALITY.md).
 
 ## Tips & Best Practices
 

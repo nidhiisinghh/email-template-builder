@@ -14,7 +14,7 @@ function DraggableBlockItem({ block, onAddBlock }) {
   };
 
   return (
-    <button
+    <div
       ref={setNodeRef}
       style={style}
       className="block-item"
@@ -25,7 +25,7 @@ function DraggableBlockItem({ block, onAddBlock }) {
     >
       <span className="block-icon">{block.icon}</span>
       <span className="block-label">{block.label}</span>
-    </button>
+    </div>
   );
 }
 

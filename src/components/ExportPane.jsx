@@ -103,9 +103,9 @@ export default function ExportPane({ blocks, templateId }) {
       }, 2000);
     } catch (error) {
       console.error('Email sending error:', error);
-      setEmailStatus({ 
-        type: 'error', 
-        message: error.response?.data?.message || error.message || 'Failed to send email' 
+      setEmailStatus({
+        type: 'error',
+        message: error.response?.data?.message || error.message || 'Failed to send email'
       });
     }
   };
@@ -209,7 +209,7 @@ export default function ExportPane({ blocks, templateId }) {
                   placeholder="Email subject"
                 />
               </div>
-              
+
               {emailStatus.message && (
                 <div className={`status-message ${emailStatus.type}`}>
                   {emailStatus.message}
@@ -217,15 +217,15 @@ export default function ExportPane({ blocks, templateId }) {
               )}
 
               <div className="modal-actions">
-                <button 
-                  className="btn-send" 
+                <button
+                  className="btn-send"
                   onClick={handleSendEmail}
                   disabled={emailStatus.type === 'loading'}
                 >
                   {emailStatus.type === 'loading' ? 'Sending...' : 'Send Email'}
                 </button>
-                <button 
-                  className="btn-cancel" 
+                <button
+                  className="btn-cancel"
                   onClick={() => {
                     setShowEmailModal(false);
                     setEmailStatus({ type: '', message: '' });
