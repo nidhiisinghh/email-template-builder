@@ -150,7 +150,7 @@ main {
 
             <div className="spa-actions">
               <button className="download-btn" onClick={handleDownloadSPA}>
-                📥 Download SPA Files
+              Download SPA Files
               </button>
               <p className="info-text">
                 This will download EmailTemplate.jsx, App.jsx, and App.css files
