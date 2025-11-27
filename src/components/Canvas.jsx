@@ -15,10 +15,10 @@ export default function Canvas({
   const { setNodeRef, isOver } = useDroppable({
     id: 'canvas-drop-zone',
   });
-  
+
   return (
     <main className="canvas">
-      <div 
+      <div
         ref={setNodeRef}
         className={`canvas-content ${isOver ? 'drop-over' : ''}`}
       >

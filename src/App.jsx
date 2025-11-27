@@ -34,6 +34,7 @@ export default function App() {
   const [currentTemplateId, setCurrentTemplateId] = useState(null);
 
   const [successMessage, setSuccessMessage] = useState('');
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -57,6 +58,20 @@ export default function App() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [templateName, blocks]);
+
+  // Reset isSaved when content changes
+  useEffect(() => {
+    if (isSaved) {
+      setIsSaved(false);
+    }
+  }, [blocks, templateName]);
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(''), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -168,6 +183,7 @@ export default function App() {
       }
 
       localStorage.removeItem('emailTemplateDraft');
+      setIsSaved(true);
       alert('Template saved successfully!');
     } catch (err) {
       if (err.response && err.response.data) {
@@ -217,14 +233,14 @@ export default function App() {
 `;
 
     blocks.forEach((block) => {
-      const style = `style="background-color: ${block.styles.backgroundColor}; padding: ${block.styles.padding}; font-size: ${block.styles.fontSize}; color: ${block.styles.color}; margin: 8px 0; border-radius: 4px;"`;
+      const style = `style="background-color: ${block.styles.backgroundColor}; padding: ${block.styles.padding}; font-size: ${block.styles.fontSize}; color: ${block.styles.color}; margin: 8px 0; border-radius: 4px; text-align: ${block.styles.textAlign || 'left'};"`;
 
       switch (block.type) {
         case 'text':
           html += `      <p ${style}>${block.content}</p>\n`;
           break;
-        case 'image':
-          html += `      <div ${style}><img src="${block.content}" alt="Email content" /></div>\n`;
+        case 'attachment':
+          html += `      <div ${style}><a href="${block.styles.link || '#'}" style="display: inline-block; padding: 12px 16px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; text-decoration: none; color: #334155; font-family: Arial, sans-serif; font-weight: 500;">📎 ${block.content || 'Attachment'}</a></div>\n`;
           break;
         case 'button':
           html += `      <div ${style}><a href="${block.styles.link || '#'}" style="display: inline-block; padding: 10px 20px; background-color: ${block.styles.backgroundColor}; color: ${block.styles.color}; text-decoration: none; border-radius: 4px;">${block.content}</a></div>\n`;
@@ -296,9 +312,14 @@ export default function App() {
         padding: '16px',
         fontSize: '16px',
         color: '#000000',
+        textAlign: 'left', // Default alignment
         ...(blockType === 'button' && { link: '#' }), // Add default link for button blocks
+        ...(blockType === 'attachment' && { link: '#' }), // Add default link for attachment blocks
       },
     };
+    if (blockType === 'attachment') {
+      newBlock.content = 'Attachment Name';
+    }
     setBlocks([...blocks, newBlock]);
   };
 
@@ -355,81 +376,101 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Email Template Builder</h1>
-        <div className="header-controls">
+        <div className="header-left">
+          <div className="app-logo">
+            <div className="logo-circle">E</div>
+            <h1>Email Builder</h1>
+          </div>
+        </div>
+
+        <div className="header-center">
+          <nav className="main-nav">
+            <button
+              className={`nav-tab ${view === 'editor' ? 'active' : ''}`}
+              onClick={() => setView('editor')}
+            >
+              Editor
+            </button>
+            <button
+              className={`nav-tab ${view === 'preview' ? 'active' : ''}`}
+              onClick={() => setView('preview')}
+            >
+              Preview
+            </button>
+            <button
+              className={`nav-tab ${view === 'export' ? 'active' : ''}`}
+              onClick={() => setView('export')}
+            >
+              Export
+            </button>
+            <button
+              className={`nav-tab ${view === 'spa' ? 'active' : ''}`}
+              onClick={() => setView('spa')}
+            >
+              SPA
+            </button>
+          </nav>
+        </div>
+
+        <div className="header-right">
           <input
             type="text"
             value={templateName}
             onChange={(e) => setTemplateName(e.target.value)}
             className="template-name-input"
-            placeholder="Template name"
+            placeholder="Template Name"
           />
+          <div className="header-actions">
+            <Link to="/saved" className="btn-icon-text" title="Saved Templates">
+              Saved
+            </Link>
+            <Link to="/shared-templates" className="btn-icon-text" title="Shared Templates">
+              Shared
+            </Link>
+          </div>
         </div>
       </header>
 
-      {/* Secondary navigation bar for actions */}
-      <nav className="secondary-nav">
-        <div className="nav-actions">
+      {/* Toolbar for actions */}
+      <div className="app-toolbar">
+        <div className="toolbar-left">
           <button onClick={() => setShowPrebuilt(true)} className="btn-secondary">
             Prebuilt Templates
           </button>
-          <button onClick={saveTemplate} className="save-btn" disabled={loading}>
-            {loading ? 'Saving...' : 'Save Template'}
+          <button onClick={clearDraft} className="btn-secondary">
+            Clear Canvas
           </button>
-          <button onClick={copyToClipboard} className="copy-btn">
+        </div>
+
+        <div className="toolbar-right">
+          <button onClick={copyToClipboard} className="btn-secondary">
             Copy HTML
           </button>
-          <button onClick={clearDraft} className="btn-secondary">
-            Clear Draft
+          <button
+            onClick={saveTemplate}
+            className="btn-secondary"
+            disabled={loading}
+            style={{ minWidth: '140px' }}
+          >
+            {loading ? 'Saving...' : isSaved ? 'Saved' : 'Save Template'}
           </button>
-          <button onClick={logout} className="logout-btn">
+          <div className="divider-vertical"></div>
+          <button onClick={logout} className="btn-danger">
             Logout
           </button>
         </div>
-        <div className="view-tabs">
-          <button
-            className={`tab ${view === 'editor' ? 'active' : ''}`}
-            onClick={() => setView('editor')}
-          >
-            Editor
-          </button>
-          <button
-            className={`tab ${view === 'preview' ? 'active' : ''}`}
-            onClick={() => setView('preview')}
-          >
-            Preview
-          </button>
-          <button
-            className={`tab ${view === 'export' ? 'active' : ''}`}
-            onClick={() => setView('export')}
-          >
-            Export
-          </button>
-          <button
-            className={`tab ${view === 'spa' ? 'active' : ''}`}
-            onClick={() => setView('spa')}
-          >
-            SPA
-          </button>
-          <Link to="/saved" className="history-link">
-            Saved
-          </Link>
-          <Link to="/shared-templates" className="history-link">
-            Shared
-          </Link>
-        </div>
-      </nav>
+      </div>
 
       {/* Display error messages */}
-      {error && <div className="error-message" style={{ margin: '1rem 2rem' }}>{error}</div>}
+      {error && <div className="error-message">{error}</div>}
 
       {/* Display success messages */}
-      {successMessage && <div className="success-message" style={{ margin: '1rem 2rem' }}>{successMessage}</div>}
+      {successMessage && <div className="success-message">{successMessage}</div>}
 
       {/* Prebuilt Templates Modal */}
       {showPrebuilt && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content prebuilt-modal">
             <div className="modal-header">
               <h2>Prebuilt Templates</h2>
               <button className="close-btn" onClick={() => setShowPrebuilt(false)}>×</button>
@@ -482,6 +523,7 @@ export default function App() {
                   block={selectedBlock}
                   onUpdateBlock={updateBlock}
                   onMoveBlock={moveBlock}
+                  onClose={() => setSelectedBlockId(null)}
                 />
               )}
             </div>
@@ -498,10 +540,47 @@ export default function App() {
   );
 }
 
-function PropertyPanel({ block, onUpdateBlock, onMoveBlock }) {
+function PropertyPanel({ block, onUpdateBlock, onMoveBlock, onClose }) {
   return (
     <div className="property-panel">
-      <h3>Properties</h3>
+      <div className="property-header">
+        <h3>Properties</h3>
+        <button className="close-panel-btn" onClick={onClose}>×</button>
+      </div>
+
+      {/* Alignment Control for all blocks except spacer/divider if desired, but user asked for all */}
+      {block.type !== 'spacer' && block.type !== 'divider' && (
+        <div className="property-group">
+          <label>Alignment</label>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            {['left', 'center', 'right'].map((align) => (
+              <button
+                key={align}
+                onClick={() =>
+                  onUpdateBlock(block.id, {
+                    styles: { ...block.styles, textAlign: align },
+                  })
+                }
+                style={{
+                  flex: 1,
+                  padding: '0.5rem',
+                  backgroundColor:
+                    block.styles.textAlign === align
+                      ? 'var(--accent-blue)'
+                      : 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  textTransform: 'capitalize',
+                }}
+              >
+                {align}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {block.type === 'text' && (
         <div className="property-group">
@@ -516,18 +595,33 @@ function PropertyPanel({ block, onUpdateBlock, onMoveBlock }) {
         </div>
       )}
 
-      {block.type === 'image' && (
-        <div className="property-group">
-          <label>Image URL</label>
-          <input
-            type="text"
-            value={block.content}
-            onChange={(e) =>
-              onUpdateBlock(block.id, { content: e.target.value })
-            }
-            placeholder="Enter image URL"
-          />
-        </div>
+      {block.type === 'attachment' && (
+        <>
+          <div className="property-group">
+            <label>Display Text</label>
+            <input
+              type="text"
+              value={block.content}
+              onChange={(e) =>
+                onUpdateBlock(block.id, { content: e.target.value })
+              }
+              placeholder="e.g. Download Report.pdf"
+            />
+          </div>
+          <div className="property-group">
+            <label>File URL</label>
+            <input
+              type="text"
+              value={block.styles.link || ''}
+              onChange={(e) =>
+                onUpdateBlock(block.id, {
+                  styles: { ...block.styles, link: e.target.value },
+                })
+              }
+              placeholder="https://example.com/file.pdf"
+            />
+          </div>
+        </>
       )}
 
       {block.type === 'button' && (

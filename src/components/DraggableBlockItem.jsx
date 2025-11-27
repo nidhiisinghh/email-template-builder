@@ -31,12 +31,13 @@ export default function DraggableBlockItem({
     <div
       ref={setNodeRef}
       style={style}
-      className={`block-wrapper ${isSelected ? 'selected' : ''} ${
-        isDragging ? 'dragging' : ''
-      }`}
+      className={`block-wrapper ${isSelected ? 'selected' : ''} ${isDragging ? 'dragging' : ''
+        }`}
       onClick={() => onSelect(block.id)}
     >
-      <BlockRenderer block={block} />
+      <div className="block-content">
+        <BlockRenderer block={block} isEditable={true} />
+      </div>
       <div className="block-controls">
         <button
           className="drag-handle"

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authAPI } from '../utils/api';
 import { useShare } from '../contexts/ShareContext';
+import { Eye, EyeOff } from 'lucide-react';
 import '../App.css';
 import './HeroPage.css';
 
@@ -16,6 +17,12 @@ export default function AuthPage() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { fetchPendingShares } = useShare();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
 
   const handleChange = (e) => {
     setFormData({
@@ -26,18 +33,26 @@ export default function AuthPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Form submitted', { isLogin, formData });
     setLoading(true);
     setError('');
 
     try {
+      console.log('Calling auth API...');
       const response = isLogin
         ? await authAPI.login(formData)
         : await authAPI.register(formData);
 
+      console.log('Auth API success', response.data);
       localStorage.setItem('token', response.data.token);
-      await fetchPendingShares(); // Fetch shares immediately after login
+
+      console.log('Fetching pending shares...');
+      fetchPendingShares(); // Fetch shares in background
+
+      console.log('Navigating to app...');
       navigate('/app');
     } catch (err) {
+      console.error('Auth error:', err);
       if (err.response && err.response.data) {
         setError(err.response.data.message || 'An error occurred');
       } else {
@@ -115,17 +130,41 @@ export default function AuthPage() {
 
             <div className="form-group">
               <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                minLength="6"
-                placeholder="Enter your password"
-                className="form-control"
-              />
+              <div className="password-input-container" style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  minLength="6"
+                  placeholder="Enter your password"
+                  className="form-control"
+                  style={{ paddingRight: '40px' }}
+                />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: '0',
+                    color: '#666',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
 
             <button type="submit" className="btn-primary large" style={{ width: '100%', marginTop: '1rem' }} disabled={loading}>

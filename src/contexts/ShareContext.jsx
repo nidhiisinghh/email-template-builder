@@ -16,6 +16,12 @@ export const ShareProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchPendingShares = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await shareAPI.getPendingShares();
       setPendingShares(response.data.pendingShares || []);

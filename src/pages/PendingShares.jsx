@@ -74,9 +74,9 @@ export default function PendingShares() {
       {pendingShares.length === 0 ? (
         <div className="empty-history">
           <p>No pending template shares.</p>
-          <Link to="/history" className="btn-primary">
+          <button onClick={() => navigate('/saved')} className="btn-primary">
             View All Templates
-          </Link>
+          </button>
         </div>
       ) : (
         <div className="templates-grid">

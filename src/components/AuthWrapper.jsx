@@ -11,19 +11,24 @@ const AuthWrapper = ({ children }) => {
   useEffect(() => {
     const checkAuthStatus = async () => {
       const token = localStorage.getItem('token');
-      
+      console.log('AuthWrapper checking status, token exists:', !!token);
+
       // If no token found, redirect to auth page
       if (!token) {
+        console.log('AuthWrapper: No token, redirecting to auth');
         setIsAuthenticated(false);
         navigate('/auth');
         return;
       }
-      
+
       try {
         // Validate token by making a request to the profile endpoint
+        console.log('AuthWrapper: Validating token...');
         await authAPI.getProfile();
+        console.log('AuthWrapper: Token valid');
         setIsAuthenticated(true);
       } catch (error) {
+        console.error('AuthWrapper: Token invalid', error);
         // Token is invalid or expired
         localStorage.removeItem('token');
         setIsAuthenticated(false);
