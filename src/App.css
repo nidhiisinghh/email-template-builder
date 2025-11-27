@@ -792,35 +792,38 @@ body {
 
 .property-group label {
   display: block;
-  font-weight: 600;
-  font-size: 0.85rem;
   margin-bottom: 0.5rem;
-  color: var(--text-primary);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .property-group input[type='text'],
 .property-group input[type='number'],
 .property-group input[type='color'],
+.property-group select,
 .property-group textarea {
   width: 100%;
-  padding: 0.6rem;
-  border: 1px solid var(--border-color);
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: var(--radius-sm);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-family: inherit;
   transition: var(--transition);
-  background-color: #f8fafc;
-  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
-.property-group input[type='text']:focus,
-.property-group input[type='number']:focus,
-.property-group input[type='color']:focus,
+.property-group input:focus,
+.property-group select:focus,
 .property-group textarea:focus {
   outline: none;
   border-color: var(--accent-blue);
-  background: white;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
 }
 
 .property-group input[type='color'] {
@@ -1124,40 +1127,7 @@ body {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
 
-.property-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
 
-.property-group input[type='text'],
-.property-group input[type='number'],
-.property-group input[type='color'],
-.property-group select,
-.property-group textarea {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: var(--radius-sm);
-  font-size: 0.95rem;
-  transition: var(--transition);
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-}
-
-.property-group input:focus,
-.property-group select:focus,
-.property-group textarea:focus {
-  outline: none;
-  border-color: var(--accent-blue);
-  box-shadow: 0 0 0 3px rgba(106, 135, 121, 0.2);
-  /* Sage green shadow */
-  background-color: rgba(255, 255, 255, 0.1);
-}
 
 .status-message,
 .error-message,
@@ -1654,6 +1624,7 @@ body {
 
 .prebuilt-modal {
   background-color: var(--bg-dark);
+  background-image: var(--bg-gradient);
   /* Navy Blue */
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1685,11 +1656,14 @@ body {
   transition: var(--transition);
   border: 1px solid transparent;
   text-align: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .prebuilt-template-card:hover {
   transform: translateY(-5px);
   box-shadow: var(--shadow-lg);
+  border-color: var(--accent-blue);
 }
 
 .prebuilt-template-card h3 {
@@ -1705,22 +1679,15 @@ body {
   margin-bottom: 1.5rem;
 }
 
-.prebuilt-template-card .btn-secondary {
-  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
-  color: white;
-  border: 1px solid var(--primary);
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: var(--shadow-md);
+.prebuilt-template-card .btn-icon-text {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.prebuilt-template-card .btn-secondary:hover {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+.prebuilt-template-card .btn-icon-text:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
 }
 
 /* Responsive */

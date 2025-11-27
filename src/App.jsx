@@ -378,7 +378,6 @@ export default function App() {
       <header className="app-header">
         <div className="header-left">
           <div className="app-logo">
-            <div className="logo-circle">E</div>
             <h1>Email Builder</h1>
           </div>
         </div>
@@ -482,8 +481,9 @@ export default function App() {
                     <h3>{template.name}</h3>
                     <p>{template.blocks.length} blocks</p>
                     <button
-                      className="btn-secondary"
+                      className="btn-icon-text"
                       onClick={() => loadPrebuiltTemplate(template)}
+                      style={{ justifyContent: 'center', width: '100%', marginTop: 'auto' }}
                     >
                       Use Template
                     </button>
