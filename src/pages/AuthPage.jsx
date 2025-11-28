@@ -73,7 +73,7 @@ export default function AuthPage() {
             <span>EmailBuilder</span>
           </div>
           <div className="nav-links">
-            <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>Home</Link>
+            <Link to="/" style={{ textDecoration: 'none' }}>Home</Link>
           </div>
         </div>
       </div>
