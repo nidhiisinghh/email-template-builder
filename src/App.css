@@ -1136,8 +1136,8 @@ body {
   position: fixed;
   top: 134px;
   left: 0;
-  right: 0;        
-  width: 100%; 
+  right: 0;
+  width: 100%;
   z-index: 1000;
   border-radius: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -1512,14 +1512,14 @@ body {
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
-   color: white;
+  color: white;
   transition: var(--transition);
 }
 
 .btn-danger:hover {
   background: #891212;
   color: #ffffff;
-  border-color:#891212 ;
+  border-color: #891212;
 }
 
 .empty-history {
