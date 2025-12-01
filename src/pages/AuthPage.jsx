@@ -70,7 +70,7 @@ export default function AuthPage() {
         <div className="nav-content">
           <div className="logo">
             <span className="logo-icon">✉️</span>
-            <span>EmailBuilder</span>
+            <span>Templify</span>
           </div>
           <div className="nav-links">
             <Link to="/" style={{ textDecoration: 'none' }}>Home</Link>

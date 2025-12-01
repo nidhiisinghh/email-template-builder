@@ -378,7 +378,7 @@ export default function MainDashboard() {
       <header className="app-header">
         <div className="header-left">
           <div className="app-logo">
-            <h1>Email Builder</h1>
+            <h1>✉️ Templify</h1>
           </div>
         </div>
 

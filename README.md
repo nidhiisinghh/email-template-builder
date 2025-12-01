@@ -98,18 +98,6 @@ http://localhost:5173/
 ### Prebuilt Templates
 
 1. Click "Prebuilt Templates" in the editor
-2. Browse the available templates (Job Proposal, Event Invitation, Newsletter, Product Launch)
-3. Click "Use Template" to load a prebuilt template
-4. Customize the template to your needs
-
-### Preview Pane
-
-- Click the **Preview** tab to see your email template rendered
-- This shows how your email will look when sent
-- Useful for checking layout and styling before export
-
-### Exporting
-
 #### HTML Export
 1. Click the **Export** tab
 2. Select **HTML** format
@@ -151,19 +139,6 @@ email-builder/
 │   │   ├── HeroPage.jsx           # Landing page
 │   │   ├── AuthPage.jsx           # Login/Signup page
 │   │   └── TemplateHistory.jsx    # Template history page
-│   ├── App.jsx                     # Main application
-│   ├── App.css                     # Main styles
-│   ├── index.css                   # Global styles
-│   └── main.jsx                    # React entry point
-├── backend/
-│   ├── controllers/               # Request handlers
-│   ├── models/                    # Database models
-│   ├── routes/                    # API routes
-│   ├── middleware/                # Authentication middleware
-│   ├── utils/                     # Utility functions
-│   ├── server.js                  # Express server
-│   └── .env                       # Environment variables
-├── vite.config.js
 ├── package.json
 └── README.md
 ```

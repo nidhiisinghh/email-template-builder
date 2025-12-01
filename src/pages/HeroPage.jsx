@@ -28,7 +28,7 @@ export default function Hero() {
         <div className="nav-content">
           <div className="logo">
             <span className="logo-icon">✉️</span>
-            <span>EmailBuilder</span>
+            <span>Templify</span>
           </div>
           <div className="nav-links">
             <a href="#features">Features</a>
@@ -68,7 +68,7 @@ export default function Hero() {
                   <span></span>
                   <span></span>
                 </div>
-                <div className="address-bar">app.emailbuilder.com</div>
+                <div className="address-bar">app.templify.com</div>
               </div>
               <div className="app-preview">
                 <div className="sidebar">
@@ -144,7 +144,7 @@ export default function Hero() {
           <div className="footer-brand">
             <div className="logo">
               <span className="logo-icon">✉️</span>
-              <span>EmailBuilder</span>
+              <span>Templify</span>
             </div>
             <p>Create beautiful, responsive email templates without writing code.</p>
           </div>
