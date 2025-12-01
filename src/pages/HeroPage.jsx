@@ -8,7 +8,7 @@ export default function Hero() {
 
   const handleGetStarted = async () => {
     const token = localStorage.getItem('token');
-    
+
     if (token) {
       try {
         await authAPI.getProfile();
@@ -35,7 +35,7 @@ export default function Hero() {
           </div>
         </div>
       </div>
-      
+
       <section className="hero-section">
         <div className="hero-content">
           <div className="hero-text">
@@ -46,20 +46,20 @@ export default function Hero() {
             <p className="hero-subtitle">
               Build responsive, pixel-perfect email templates with simple drag-and-drop blocks.
             </p>
-            
+
             <div className="hero-cta-group">
               <button className="btn-primary large" onClick={handleGetStarted}>
                 Get started
               </button>
             </div>
-            
+
             <div className="trust-badges">
               <span>Built for designers, marketers & founders</span>
               <span className="dot">•</span>
               <span>Always free</span>
             </div>
           </div>
-          
+
           <div className="hero-visual">
             <div className="browser-mockup">
               <div className="browser-header">
@@ -83,7 +83,7 @@ export default function Hero() {
                   <div className="email-block text"></div>
                   <div className="email-block text"></div>
                   <div className="email-block button"></div>
-                  
+
                   <div className="floating-card card-1">
                     <span>🎨</span>
                     <span>Drag & Drop</span>
@@ -98,39 +98,39 @@ export default function Hero() {
           </div>
         </div>
       </section>
-      
+
       <section className="features-section" id="features">
         <div className="section-header">
           <h2>Powerful features for modern email design</h2>
           <p>Built for designers, marketers, and developers who want to create beautiful emails without coding.</p>
         </div>
-        
+
         <div className="features-grid">
           <div className="feature-card">
             <div className="feature-icon">🎨</div>
             <h3>Visual Builder</h3>
             <p>Drag and drop interface with real-time preview. No coding required.</p>
           </div>
-          
+
           <div className="feature-card">
             <div className="feature-icon">📱</div>
             <h3>Responsive</h3>
             <p>Mobile-friendly templates that look great on any device.</p>
           </div>
-          
+
           <div className="feature-card">
             <div className="feature-icon">⚡</div>
             <h3>Lightning Fast</h3>
             <p>Export clean HTML in seconds with perfect rendering.</p>
           </div>
-          
+
           <div className="feature-card">
             <div className="feature-icon">🔄</div>
             <h3>Reusable</h3>
             <p>Save templates and components for future use.</p>
           </div>
         </div>
-        
+
         {/* Add navigation back to top */}
         <div style={{ textAlign: 'center', marginTop: '3rem' }}>
           <a href="/" className="btn-secondary" style={{ textDecoration: 'none', display: 'inline-block' }}>
@@ -138,7 +138,7 @@ export default function Hero() {
           </a>
         </div>
       </section>
-      
+
       <footer className="footer">
         <div className="footer-content">
           <div className="footer-brand">
@@ -148,21 +148,21 @@ export default function Hero() {
             </div>
             <p>Create beautiful, responsive email templates without writing code.</p>
           </div>
-          
+
           <div className="footer-links">
             <div className="link-group">
               <h4>Product</h4>
               <a href="#features">Features</a>
               <a href="/">Back to main page</a>
             </div>
-            
+
             <div className="link-group">
               <h4>Resources</h4>
               <a href="#">Documentation</a>
               <a href="#">Tutorials</a>
               <a href="#">Blog</a>
             </div>
-            
+
             <div className="link-group">
               <h4>Company</h4>
               <a href="#">About</a>

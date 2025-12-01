@@ -139,7 +139,7 @@ export default function SavedTemplates() {
       <div className="history-header">
         <div>
           <Link to="/app" className="back-link">← Back to Editor</Link>
-          <h1>Saved Templates</h1>
+          <h1>Saved Templates ({templates.length})</h1>
         </div>
         <button onClick={logout} className="btn-secondary">Logout</button>
       </div>
