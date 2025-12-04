@@ -1,35 +1,58 @@
-- **Live Preview**: See your email design in real-time as you edit
-- **HTML Export**: Download your template as valid HTML email
-- **JSON Export**: Export block structure as JSON for programmatic use
-- **SPA Builder**: Generate React components from your email template
-- **Full Property Editing**: Customize colors, fonts, padding, and more
-- **User Authentication**: Secure login and registration with JWT
-- **Template History**: Save and manage your email templates
-- **Prebuilt Templates**: Use professionally designed templates for common use cases
-- **Copy to Clipboard**: Easily copy your email HTML for pasting elsewhere
+# 🚀 Templify — Email Template Builder
 
-### 📋 Block Types
-1. **Text**: Add paragraphs with customizable fonts and colors
-2. **Image**: Embed images with URL support
-3. **Button**: Create clickable buttons with custom links
-4. **Divider**: Add horizontal lines for visual separation
-5. **Spacer**: Add vertical spacing between blocks
+Templify is a powerful, intuitive platform for designing, editing, and managing professional email templates with zero coding required. Create dynamic content using drag-and-drop blocks, preview changes in real time, and export your templates in multiple formats for any workflow.
 
-### 🎨 Customization
-Each block supports:
-- Background color
-- Text color
-- Font size
-- Padding
-- Reordering (move up/down)
-- Deletion
+---
 
-## Setup
+## ✨ Core Features
 
-### Prerequisites
-- Node.js 18.0 or higher
-- npm 9.0 or higher
-- MongoDB (local or remote)
+- **Live Preview** – Watch your email design update instantly while editing  
+- **HTML Export** – Download production-ready HTML email templates  
+- **JSON Export** – Export structured block data for programmatic workflows  
+- **SPA Component Builder** – Generate reusable React components directly from your email layout  
+- **Full Property Controls** – Customize fonts, colors, spacing, alignment, padding, and more  
+- **Secure Authentication** – JWT-based login and registration system  
+- **Template History** – Save, edit, and manage all your previous email templates  
+- **Prebuilt Templates** – Start fast with professionally designed templates for common email use cases  
+- **Copy to Clipboard** – Instantly copy formatted HTML for deployment or integration
+
+---
+
+## 📦 Block Library
+
+Templify supports multiple drag-and-drop block types to build structured layouts:
+
+1. **Text Block** – Rich text content with full typography controls  
+2. **Image Block** – Add images using URLs with adjustable sizing and alignment  
+3. **Button Block** – Customizable call-to-action buttons with target links  
+4. **Divider Block** – Clean visual separators for layout structure  
+5. **Spacer Block** – Adjustable whitespace to fine-tune design spacing
+
+---
+
+## 🎨 Advanced Customization
+
+Each content block supports:
+
+- Background color  
+- Text color  
+- Font size  
+- Padding & spacing  
+- Reordering (move up / move down)  
+- Delete control  
+- Live nested updates
+
+---
+
+## 🛠️ Setup & Installation
+
+### ✔️ Prerequisites
+
+Make sure you have installed:
+
+- **Node.js** v18.0 or higher  
+- **npm** v9.0 or higher  
+- **MongoDB** (local installation or MongoDB Atlas cloud)
 
 ### Installation
 
