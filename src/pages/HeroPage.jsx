@@ -6,6 +6,13 @@ import './HeroPage.css';
 export default function Hero() {
   const navigate = useNavigate();
 
+  React.useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/app');
+    }
+  }, [navigate]);
+
   const handleGetStarted = async () => {
     const token = localStorage.getItem('token');
 
