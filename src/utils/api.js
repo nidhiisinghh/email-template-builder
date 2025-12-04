@@ -2,8 +2,8 @@ import axios from 'axios';
 
 // Create axios instance with default config
 const api = axios.create({
-  baseURL: '/api',
-  timeout: 10000,
+  baseURL: 'https://templify-uqbl.onrender.com/api',
+  timeout: 60000,
 });
 
 // Function to get auth headers
