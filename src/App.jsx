@@ -17,7 +17,7 @@ function App() {
     <>
 
       <Routes>
-        <Route path="/" element={<HeroPage />} />
+        <Route path="/" element={<PublicRoute><HeroPage /></PublicRoute>} />
         <Route path="/auth" element={<PublicRoute><AuthPage /></PublicRoute>} />
         <Route path="/app" element={<AuthWrapper><MainDashboard /></AuthWrapper>} />
         <Route path="/saved" element={<AuthWrapper><SavedTemplates /></AuthWrapper>} />
