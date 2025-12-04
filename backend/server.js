@@ -13,11 +13,18 @@ const shareRoutes = require('./routes/shareRoutes');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://email-template-builder-orpin.vercel.app",
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: allowedOrigins,
   credentials: true,
   optionsSuccessStatus: 200
 }));
+
 app.use(express.json({ limit: '10mb' }));
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/templify', {
