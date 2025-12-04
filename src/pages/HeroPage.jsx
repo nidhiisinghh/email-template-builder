@@ -61,36 +61,38 @@ export default function Hero() {
           </div>
 
           <div className="hero-visual">
-            <div className="browser-mockup">
-              <div className="browser-header">
-                <div className="dots">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-                <div className="address-bar">app.templify.com</div>
-              </div>
-              <div className="app-preview">
-                <div className="sidebar">
-                  <div className="tool-item"></div>
-                  <div className="tool-item"></div>
-                  <div className="tool-item"></div>
-                  <div className="tool-item"></div>
-                </div>
-                <div className="canvas-preview">
-                  <div className="email-block header"></div>
-                  <div className="email-block hero"></div>
-                  <div className="email-block text"></div>
-                  <div className="email-block text"></div>
-                  <div className="email-block button"></div>
-
-                  <div className="floating-card card-1">
-                    <span>🎨</span>
-                    <span>Drag & Drop</span>
+            <div className="mockup-wrapper">
+              <div className="browser-mockup">
+                <div className="browser-header">
+                  <div className="dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                   </div>
-                  <div className="floating-card card-2">
-                    <span>⚡</span>
-                    <span>Instant Preview</span>
+                  <div className="address-bar">app.templify.com</div>
+                </div>
+                <div className="app-preview">
+                  <div className="sidebar">
+                    <div className="tool-item"></div>
+                    <div className="tool-item"></div>
+                    <div className="tool-item"></div>
+                    <div className="tool-item"></div>
+                  </div>
+                  <div className="canvas-preview">
+                    <div className="email-block header"></div>
+                    <div className="email-block hero"></div>
+                    <div className="email-block text"></div>
+                    <div className="email-block text"></div>
+                    <div className="email-block button"></div>
+
+                    <div className="floating-card card-1">
+                      <span>🎨</span>
+                      <span>Drag & Drop</span>
+                    </div>
+                    <div className="floating-card card-2">
+                      <span>⚡</span>
+                      <span>Instant Preview</span>
+                    </div>
                   </div>
                 </div>
               </div>

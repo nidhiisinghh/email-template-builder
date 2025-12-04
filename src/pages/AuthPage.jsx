@@ -47,7 +47,7 @@ export default function AuthPage() {
       localStorage.setItem('token', response.data.token);
 
       console.log('Fetching pending shares...');
-      fetchPendingShares(); // Fetch shares in background
+      fetchPendingShares(); 
 
       console.log('Navigating to app...');
       navigate('/app');

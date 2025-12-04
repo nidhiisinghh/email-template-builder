@@ -93,10 +93,8 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// New function to get all users (for sharing dropdown)
 exports.getAllUsers = async (req, res) => {
   try {
-    // Fetch all users except the current user
     const users = await User.find({ _id: { $ne: req.user._id } }, 'username email');
     
     res.json({

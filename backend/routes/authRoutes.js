@@ -10,7 +10,6 @@ router.post('/login', login);
 
 router.get('/profile', auth, getProfile);
 
-// New route for getting all users (for sharing dropdown)
 router.get('/users', auth, getAllUsers);
 
 module.exports = router;

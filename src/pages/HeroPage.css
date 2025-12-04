@@ -202,7 +202,6 @@
 
 .browser-mockup {
   background: #1e293b;
-  /* Slate 800 */
   border-radius: 12px;
   border: 1px solid var(--border);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);

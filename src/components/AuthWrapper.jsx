@@ -13,7 +13,6 @@ const AuthWrapper = ({ children }) => {
       const token = localStorage.getItem('token');
       console.log('AuthWrapper checking status, token exists:', !!token);
 
-      // If no token found, redirect to auth page
       if (!token) {
         console.log('AuthWrapper: No token, redirecting to auth');
         setIsAuthenticated(false);
@@ -22,14 +21,12 @@ const AuthWrapper = ({ children }) => {
       }
 
       try {
-        // Validate token by making a request to the profile endpoint
         console.log('AuthWrapper: Validating token...');
         await authAPI.getProfile();
         console.log('AuthWrapper: Token valid');
         setIsAuthenticated(true);
       } catch (error) {
         console.error('AuthWrapper: Token invalid', error);
-        // Token is invalid or expired
         localStorage.removeItem('token');
         setIsAuthenticated(false);
         navigate('/auth');
@@ -39,12 +36,10 @@ const AuthWrapper = ({ children }) => {
     checkAuthStatus();
   }, [navigate]);
 
-  // Show nothing while checking auth status
   if (isAuthenticated === null) {
     return null;
   }
 
-  // If authenticated, render children with pending shares context
   if (isAuthenticated) {
     return (
       <>
@@ -63,7 +58,6 @@ const AuthWrapper = ({ children }) => {
     );
   }
 
-  // Return null while redirecting
   return null;
 };
 

@@ -10,11 +10,9 @@ const PublicRoute = ({ children }) => {
   useEffect(() => {
     if (token) {
       if (location.pathname === '/auth') {
-        // If user is logged in and tries to access auth page (e.g. via back button)
-        // Show the custom modal
+      
         setShowLogoutModal(true);
       } else {
-        // For other public routes like landing page, just redirect to app if logged in
         navigate('/app');
       }
     }
@@ -79,7 +77,6 @@ const PublicRoute = ({ children }) => {
         </div>
       );
     }
-    // If token exists but not showing modal (e.g. redirecting from /), render null
     return null;
   }
 

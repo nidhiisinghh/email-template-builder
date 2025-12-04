@@ -28,7 +28,6 @@ exports.getUserTemplates = async (req, res) => {
   try {
     const userId = req.user._id;
     
-    // Get only private and shared templates, not received ones
     const templates = await Template.find({ 
       userId,
       shareStatus: { $in: ['private', 'shared'] }
@@ -49,10 +48,8 @@ exports.getTemplateById = async (req, res) => {
     const { id } = req.params;
     const userId = req.user._id;
 
-    // First check if user owns the template
     let template = await Template.findOne({ _id: id, userId });
     
-    // If not found, check if it's shared with the user
     if (!template) {
       template = await Template.findOne({ 
         _id: id,
