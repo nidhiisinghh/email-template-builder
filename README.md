@@ -1,7 +1,8 @@
-# 🚀 Templify — Email Template Builder
+# ✉️ Templify — Email Template Builder
 
 Templify is a powerful, intuitive platform for designing, editing, and managing professional email templates with zero coding required. Create dynamic content using drag-and-drop blocks, preview changes in real time, and export your templates in multiple formats for any workflow.
 
+[![Live Demo](https://img.shields.io/badge/LIVE-DEMO-green?style=for-the-badge)](https://email-template-builder-orpin.vercel.app)
 ---
 
 ## ✨ Core Features
