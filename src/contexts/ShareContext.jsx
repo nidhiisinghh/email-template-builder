@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
 import { shareAPI } from '../utils/api';
 
 const ShareContext = createContext();
@@ -16,7 +17,7 @@ export const ShareProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchPendingShares = async () => {
-    const token = localStorage.getItem('token');
+    const token = Cookies.get('token');
     if (!token) {
       setLoading(false);
       return;

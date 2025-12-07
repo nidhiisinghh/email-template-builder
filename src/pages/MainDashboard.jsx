@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
 import '../App.css';
 import {
   DndContext,
@@ -354,7 +355,8 @@ export default function MainDashboard() {
 
   const logout = () => {
     // Clear all user-related data
-    localStorage.removeItem('token');
+    Cookies.remove('token');
+    Cookies.remove('refreshToken');
     // Redirect to auth page without full reload to prevent 404
     navigate('/auth');
   };

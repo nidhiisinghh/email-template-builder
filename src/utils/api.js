@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -6,9 +7,48 @@ const api = axios.create({
   timeout: 60000,
 });
 
+// Response interceptor for API calls
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Access Token was expired
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const refreshToken = Cookies.get('refreshToken');
+        if (refreshToken) {
+          const response = await axios.post(`${api.defaults.baseURL}/auth/refresh`, { refreshToken });
+
+          if (response.status === 200) {
+            const { token } = response.data;
+            Cookies.set('token', token, { expires: 7 }); // Update access token
+
+            // Update the header of the failed request
+            originalRequest.headers['Authorization'] = `Bearer ${token}`;
+
+            // Retry the original request
+            return api(originalRequest);
+          }
+        }
+      } catch (err) {
+        // Refresh token failed, logout user
+        Cookies.remove('token');
+        Cookies.remove('refreshToken');
+        window.location.href = '/auth'; // Force logout
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Function to get auth headers
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
+  const token = Cookies.get('token');
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
@@ -19,6 +59,7 @@ export const authAPI = {
   getProfile: () => api.get('/auth/profile', { headers: getAuthHeaders() }),
   // New function to get all users for sharing dropdown
   getAllUsers: () => api.get('/auth/users', { headers: getAuthHeaders() }),
+  refreshToken: (refreshToken) => api.post('/auth/refresh', { refreshToken }),
 };
 
 // Template API

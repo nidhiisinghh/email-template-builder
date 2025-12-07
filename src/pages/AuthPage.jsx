@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Cookies from 'js-cookie';
 import { useNavigate, Link } from 'react-router-dom';
 import { authAPI } from '../utils/api';
 import { useShare } from '../contexts/ShareContext';
@@ -44,10 +45,12 @@ export default function AuthPage() {
         : await authAPI.register(formData);
 
       console.log('Auth API success', response.data);
-      localStorage.setItem('token', response.data.token);
+      // Access token expires in 15 minutes, Refresh token in 7 days
+      Cookies.set('token', response.data.token, { expires: 1 / 96 }); // ~15 minutes
+      Cookies.set('refreshToken', response.data.refreshToken, { expires: 7 });
 
       console.log('Fetching pending shares...');
-      fetchPendingShares(); 
+      fetchPendingShares();
 
       console.log('Navigating to app...');
       navigate('/app');

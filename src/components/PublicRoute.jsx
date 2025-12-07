@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const PublicRoute = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const token = localStorage.getItem('token');
+  const token = Cookies.get('token');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
@@ -19,7 +20,8 @@ const PublicRoute = ({ children }) => {
   }, [token, location.pathname, navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    Cookies.remove('token');
+    Cookies.remove('refreshToken');
     // Navigate to auth page to reset state (PublicRoute should allow access now that token is gone)
     navigate('/auth');
   };

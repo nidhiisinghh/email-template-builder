@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
 import { useNavigate, Link } from 'react-router-dom';
 import { templateAPI, shareAPI, authAPI } from '../utils/api';
 import { useShare } from '../contexts/ShareContext';
@@ -22,7 +23,7 @@ export default function SavedTemplates() {
 
   const fetchTemplates = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = Cookies.get('token');
       if (!token) {
         navigate('/');
         return;
@@ -122,7 +123,8 @@ export default function SavedTemplates() {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    Cookies.remove('token');
+    Cookies.remove('refreshToken');
     navigate('/');
   };
 

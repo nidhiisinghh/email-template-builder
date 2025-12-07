@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../utils/api';
 import { useShare } from '../contexts/ShareContext';
@@ -10,7 +11,7 @@ const AuthWrapper = ({ children }) => {
 
   useEffect(() => {
     const checkAuthStatus = async () => {
-      const token = localStorage.getItem('token');
+      const token = Cookies.get('token');
       console.log('AuthWrapper checking status, token exists:', !!token);
 
       if (!token) {
@@ -27,7 +28,8 @@ const AuthWrapper = ({ children }) => {
         setIsAuthenticated(true);
       } catch (error) {
         console.error('AuthWrapper: Token invalid', error);
-        localStorage.removeItem('token');
+        Cookies.remove('token');
+        Cookies.remove('refreshToken');
         setIsAuthenticated(false);
         navigate('/auth');
       }
