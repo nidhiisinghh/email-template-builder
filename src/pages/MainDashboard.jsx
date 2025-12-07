@@ -16,7 +16,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { Link, useNavigate } from 'react-router-dom';
-import { prebuiltAPI, templateAPI } from '../utils/api';
+import { prebuiltAPI, templateAPI, authAPI } from '../utils/api';
 import BlockPalette from '../components/BlockPalette';
 import Canvas from '../components/Canvas';
 import PreviewPane from '../components/PreviewPane';
@@ -25,6 +25,7 @@ import SPABuilder from '../components/SPABuilder';
 
 export default function MainDashboard() {
   const navigate = useNavigate();
+  const [showUserName, setShowUserName] = useState(false);
   const [blocks, setBlocks] = useState([]);
   const [selectedBlockId, setSelectedBlockId] = useState(null);
   const [view, setView] = useState('editor'); // 'editor', 'preview', 'export', 'spa'
@@ -37,6 +38,7 @@ export default function MainDashboard() {
 
   const [successMessage, setSuccessMessage] = useState('');
   const [isSaved, setIsSaved] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -61,7 +63,6 @@ export default function MainDashboard() {
     };
   }, [templateName, blocks]);
 
-  // Reset isSaved when content changes
   useEffect(() => {
     if (isSaved) {
       setIsSaved(false);
@@ -107,6 +108,22 @@ export default function MainDashboard() {
       setCurrentTemplateId(templateId);
       loadTemplate(templateId);
     }
+  }, []);
+
+  // Fetch current user profile for display
+  useEffect(() => {
+    let mounted = true;
+    const fetchProfile = async () => {
+      try {
+        const res = await authAPI.getProfile();
+        if (mounted) setCurrentUser(res.data.user || res.data);
+      } catch (err) {
+        // ignore — if not authenticated the app will redirect elsewhere
+        console.error('Failed to fetch profile', err);
+      }
+    };
+    fetchProfile();
+    return () => { mounted = false; };
   }, []);
 
   useEffect(() => {
@@ -167,7 +184,6 @@ export default function MainDashboard() {
         blocks
       };
 
-      // Check if we're updating an existing template
       const urlParams = new URLSearchParams(window.location.search);
       const templateId = urlParams.get('template');
 
@@ -178,7 +194,6 @@ export default function MainDashboard() {
         response = await templateAPI.create(templateData);
       }
 
-      // If it's a new template, update the URL with the template ID
       if (!templateId && response.data.template._id) {
         setCurrentTemplateId(response.data.template._id);
         window.history.replaceState(null, '', `?template=${response.data.template._id}`);
@@ -285,14 +300,12 @@ export default function MainDashboard() {
   const handleDragEnd = (event) => {
     const { active, over } = event;
 
-    // Handle blocks dragged from the palette
     if (active.data?.current?.isNew) {
       const blockType = active.data.current.type;
       addBlock(blockType);
       return;
     }
 
-    // Handle reordering of existing blocks
     if (over && active.id !== over.id) {
       const oldIndex = blocks.findIndex((b) => b.id === active.id);
       const newIndex = blocks.findIndex((b) => b.id === over.id);
@@ -314,9 +327,8 @@ export default function MainDashboard() {
         padding: '16px',
         fontSize: '16px',
         color: '#000000',
-        textAlign: 'left', // Default alignment
-        ...(blockType === 'button' && { link: '#' }), // Add default link for button blocks
-        ...(blockType === 'attachment' && { link: '#' }), // Add default link for attachment blocks
+        textAlign: 'left',  
+        ...(blockType === 'attachment' && { link: '#' }),
       },
     };
     if (blockType === 'attachment') {
@@ -354,10 +366,8 @@ export default function MainDashboard() {
   const selectedBlock = blocks.find((b) => b.id === selectedBlockId);
 
   const logout = () => {
-    // Clear all user-related data
     Cookies.remove('token');
     Cookies.remove('refreshToken');
-    // Redirect to auth page without full reload to prevent 404
     navigate('/auth');
   };
 
@@ -365,9 +375,7 @@ export default function MainDashboard() {
     localStorage.removeItem('emailTemplateDraft');
     setTemplateName('Untitled Template');
     setBlocks([]);
-    // Only show success message if there was actually a draft to clear
     if (localStorage.getItem('emailTemplateDraft') === null) {
-      // Set success message for draft cleared
       setSuccessMessage('Draft cleared successfully');
       setTimeout(() => setSuccessMessage(''), 3000);
     } else {
@@ -430,10 +438,34 @@ export default function MainDashboard() {
               Shared
             </Link>
           </div>
+          <div
+            className={`user-info ${showUserName ? 'show-name' : ''}`}
+            tabIndex={0}
+            role="button"
+            aria-expanded={showUserName}
+            onClick={() => setShowUserName((s) => !s)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setShowUserName((s) => !s);
+              }
+            }}
+          >
+            {currentUser ? (
+              <>
+                <div className="user-initial">{(currentUser.name || currentUser.username || '').charAt(0).toUpperCase()}</div>
+                <div className="user-name">{currentUser.name || currentUser.username}</div>
+              </>
+            ) : (
+              <>
+                <div className="user-initial">G</div>
+                <div className="user-name">Guest</div>
+              </>
+            )}
+          </div>
         </div>
       </header>
 
-      {/* Toolbar for actions */}
       <div className="app-toolbar">
         <div className="toolbar-left">
           <button onClick={() => setShowPrebuilt(true)} className="btn-secondary">
@@ -463,13 +495,10 @@ export default function MainDashboard() {
         </div>
       </div>
 
-      {/* Display error messages */}
       {error && <div className="error-message">{error}</div>}
 
-      {/* Display success messages */}
       {successMessage && <div className="success-message">{successMessage}</div>}
 
-      {/* Prebuilt Templates Modal */}
       {showPrebuilt && (
         <div className="modal-overlay">
           <div className="modal-content prebuilt-modal">
@@ -551,7 +580,6 @@ function PropertyPanel({ block, onUpdateBlock, onMoveBlock, onClose }) {
         <button className="close-panel-btn" onClick={onClose}>×</button>
       </div>
 
-      {/* Alignment Control for all blocks except spacer/divider if desired, but user asked for all */}
       {block.type !== 'spacer' && block.type !== 'divider' && (
         <div className="property-group">
           <label>Alignment</label>

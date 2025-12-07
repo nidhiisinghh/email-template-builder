@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 // Create axios instance with default config
 const api = axios.create({
   baseURL: 'https://templify-uqbl.onrender.com/api',
+  //baseURL: 'http://localhost:5001/api',
   timeout: 60000,
 });
 

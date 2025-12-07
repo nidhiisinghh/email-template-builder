@@ -6,6 +6,7 @@ import { useShare } from '../contexts/ShareContext';
 import { Eye, EyeOff } from 'lucide-react';
 import '../App.css';
 import './HeroPage.css';
+import './AuthPage.css';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -67,8 +68,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="hero-page" style={{ minHeight: '100vh', padding: '0' }}>
-
+    <div className="auth-page">
       <div className="navbar">
         <div className="nav-content">
           <div className="logo">
@@ -81,14 +81,8 @@ export default function AuthPage() {
         </div>
       </div>
 
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: 'calc(100vh - 80px)',
-        padding: '2rem'
-      }}>
-        <div className="auth-container" style={{ maxWidth: '450px', width: '100%' }}>
+      <div className="auth-wrapper">
+        <div className="auth-card-container">
           <div className="auth-header">
             <h1>{isLogin ? 'Welcome back' : 'Create account'}</h1>
             <p>
@@ -133,7 +127,7 @@ export default function AuthPage() {
 
             <div className="form-group">
               <label htmlFor="password">Password</label>
-              <div className="password-input-container" style={{ position: 'relative' }}>
+              <div className="password-input-container">
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
@@ -144,25 +138,11 @@ export default function AuthPage() {
                   minLength="6"
                   placeholder="Enter your password"
                   className="form-control"
-                  style={{ paddingRight: '40px' }}
                 />
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  style={{
-                    position: 'absolute',
-                    right: '10px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    padding: '0',
-                    color: '#666',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
+                  className="password-toggle"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -170,8 +150,8 @@ export default function AuthPage() {
               </div>
             </div>
 
-            <button type="submit" className="btn-primary large" style={{ width: '100%', marginTop: '1rem' }} disabled={loading}>
-              {loading ? 'Loading...' : (isLogin ? 'Sign in' : 'Create account')}
+            <button type="submit" className="btn-submit" disabled={loading}>
+              {loading ? 'Processing...' : (isLogin ? 'Sign in' : 'Create account')}
             </button>
           </form>
 

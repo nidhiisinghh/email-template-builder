@@ -1,4 +1,6 @@
 import React from 'react';
+import { Palette, Smartphone, Zap, Repeat } from 'lucide-react';
+import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../utils/api';
 import './HeroPage.css';
@@ -7,7 +9,7 @@ export default function Hero() {
   const navigate = useNavigate();
 
   const handleGetStarted = async () => {
-    const token = localStorage.getItem('token');
+    const token = Cookies.get('token');
 
     if (token) {
       try {
@@ -31,7 +33,7 @@ export default function Hero() {
             <span>Templify</span>
           </div>
           <div className="nav-links">
-            <a href="#features">Features</a>
+            {/* Links removed as requested */}
           </div>
         </div>
       </div>
@@ -109,36 +111,40 @@ export default function Hero() {
 
         <div className="features-grid">
           <div className="feature-card">
-            <div className="feature-icon">🎨</div>
+            <div className="feature-icon-wrapper">
+              <Palette className="feature-icon-svg" />
+            </div>
             <h3>Visual Builder</h3>
             <p>Drag and drop interface with real-time preview. No coding required.</p>
           </div>
 
           <div className="feature-card">
-            <div className="feature-icon">📱</div>
+            <div className="feature-icon-wrapper">
+              <Smartphone className="feature-icon-svg" />
+            </div>
             <h3>Responsive</h3>
             <p>Mobile-friendly templates that look great on any device.</p>
           </div>
 
           <div className="feature-card">
-            <div className="feature-icon">⚡</div>
+            <div className="feature-icon-wrapper">
+              <Zap className="feature-icon-svg" />
+            </div>
             <h3>Lightning Fast</h3>
             <p>Export clean HTML in seconds with perfect rendering.</p>
           </div>
 
           <div className="feature-card">
-            <div className="feature-icon">🔄</div>
+            <div className="feature-icon-wrapper">
+              <Repeat className="feature-icon-svg" />
+            </div>
             <h3>Reusable</h3>
             <p>Save templates and components for future use.</p>
           </div>
         </div>
 
         {/* Add navigation back to top */}
-        <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-          <a href="/" className="btn-secondary" style={{ textDecoration: 'none', display: 'inline-block' }}>
-            Back to main page
-          </a>
-        </div>
+
       </section>
 
       <footer className="footer">
@@ -155,7 +161,6 @@ export default function Hero() {
             <div className="link-group">
               <h4>Product</h4>
               <a href="#features">Features</a>
-              <a href="/">Back to main page</a>
             </div>
 
             <div className="link-group">
