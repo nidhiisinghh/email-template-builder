@@ -327,7 +327,7 @@ export default function MainDashboard() {
         padding: '16px',
         fontSize: '16px',
         color: '#000000',
-        textAlign: 'left',  
+        textAlign: 'left',
         ...(blockType === 'attachment' && { link: '#' }),
       },
     };
