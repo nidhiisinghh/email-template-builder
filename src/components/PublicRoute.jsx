@@ -10,7 +10,7 @@ const PublicRoute = ({ children }) => {
   useEffect(() => {
     if (token) {
       if (location.pathname === '/auth') {
-      
+
         setShowLogoutModal(true);
       } else {
         navigate('/app');
@@ -20,7 +20,8 @@ const PublicRoute = ({ children }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    window.location.reload();
+    // Navigate to auth page to reset state (PublicRoute should allow access now that token is gone)
+    navigate('/auth');
   };
 
   const handleCancel = () => {

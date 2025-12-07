@@ -14,7 +14,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { prebuiltAPI, templateAPI } from '../utils/api';
 import BlockPalette from '../components/BlockPalette';
 import Canvas from '../components/Canvas';
@@ -23,6 +23,7 @@ import ExportPane from '../components/ExportPane';
 import SPABuilder from '../components/SPABuilder';
 
 export default function MainDashboard() {
+  const navigate = useNavigate();
   const [blocks, setBlocks] = useState([]);
   const [selectedBlockId, setSelectedBlockId] = useState(null);
   const [view, setView] = useState('editor'); // 'editor', 'preview', 'export', 'spa'
@@ -354,8 +355,8 @@ export default function MainDashboard() {
   const logout = () => {
     // Clear all user-related data
     localStorage.removeItem('token');
-    // Redirect to auth page
-    window.location.href = '/auth';
+    // Redirect to auth page without full reload to prevent 404
+    navigate('/auth');
   };
 
   const clearDraft = () => {
